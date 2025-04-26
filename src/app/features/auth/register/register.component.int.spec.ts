@@ -1,0 +1,62 @@
+import { ComponentFixture, fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { provideHttpClient } from "@angular/common/http";
+import { HttpTestingController, provideHttpClientTesting } from "@angular/common/http/testing";
+import { provideRouter, Router } from "@angular/router";
+import { RegisterComponent } from "./register.component"
+import { environment } from "../../../../env/env.dev";
+import { apiAuth, userRegisteredSuccessfully } from "../../../shared/constants/constants";
+import { registerRequest } from "../../../shared/mocks/user.mock";
+
+describe('RegisterComponent Integration', () => {
+  let fixture: ComponentFixture<RegisterComponent>;
+  let component: RegisterComponent;
+  let httpMock: HttpTestingController;
+  let router: Router;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [RegisterComponent],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([{ path: 'login', component: RegisterComponent }])]
+    });
+    fixture = TestBed.createComponent(RegisterComponent);
+    component = fixture.debugElement.componentInstance;
+    httpMock = TestBed.inject(HttpTestingController);
+    router = TestBed.inject(Router);
+  });
+
+  it('should register successfully and navigate', fakeAsync(() => {
+    component.registerForm.setValue(registerRequest);
+    fixture.detectChanges();
+
+    fixture.nativeElement.querySelector('button[type="submit"]').click();
+    tick();
+
+    const request = httpMock.expectOne(`${environment.baseUrl}/${apiAuth}/register`);
+    request.flush({ message: userRegisteredSuccessfully });
+    tick();
+
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual(registerRequest);
+    expect(router.url).toBe('/login');
+  }));
+
+  [{ field: 'name', title: 'Duplicated name', detail: 'This name is already taken' },
+   { field: 'email', title: 'Duplicated email', detail: 'This email is already taken' },
+   { field: 'phone', title: 'Duplicated phone', detail: 'This phone is already taken' }].forEach(({ field, title, detail }) => {
+    it(`should show error toast if ${field} is already taken`, fakeAsync(() => {
+      component.registerForm.setValue(registerRequest);
+      fixture.detectChanges();
+
+      fixture.nativeElement.querySelector('button[type="submit"]').click();
+      tick();
+
+      const request = httpMock.expectOne(`${environment.baseUrl}/${apiAuth}/register`);
+      request.flush({ title: title, detail: detail }, { status: 409, statusText: 'Conflict' });
+      tick();
+
+      expect(request.request.method).toBe('POST');
+      expect(request.request.body).toEqual(registerRequest);
+      expect(router.url).not.toBe('/login');
+      }));
+    });
+})
