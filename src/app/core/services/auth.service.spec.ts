@@ -4,20 +4,33 @@ import { HttpTestingController, provideHttpClientTesting } from "@angular/common
 import { AuthService } from "./auth.service";
 import { environment } from "../../../env/env.dev";
 import { apiAuth } from "../../shared/constants/constants";
-import { registerRequest } from "../../shared/mocks/user.mock";
+import { loginRequest, registerRequest } from "../../shared/mocks/user.mock";
 
 describe('AuthService', () => {
-  beforeEach(() => TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting(), AuthService] }));
+  let authService: AuthService;
+  let httpMock: HttpTestingController;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting(), AuthService] });
+    authService = TestBed.inject(AuthService);
+    httpMock = TestBed.inject(HttpTestingController);
+  });
 
   it('should call the register endpoint', () => {
-    const authService = TestBed.inject(AuthService);
-    const httpMock = TestBed.inject(HttpTestingController);
-    
     authService.register(registerRequest).subscribe();
     const testRequest = httpMock.expectOne(`${environment.baseUrl}/${apiAuth}/register`);
     
     expect(testRequest.request.method).toBe('POST');
     expect(testRequest.request.body).toEqual(registerRequest);
+    testRequest.flush({});
+  });
+
+  it('should call the login endpoint', () => {
+    authService.login(loginRequest).subscribe();
+    const testRequest = httpMock.expectOne(`${environment.baseUrl}/${apiAuth}/login`);
+    
+    expect(testRequest.request.method).toBe('POST');
+    expect(testRequest.request.body).toEqual(loginRequest);
     testRequest.flush({});
   });
 });

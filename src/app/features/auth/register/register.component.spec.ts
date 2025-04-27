@@ -60,7 +60,7 @@ describe('RegisterComponent', () => {
     component.registerForm.setValue(registerRequest);
     component.register();
 
-    expect(authService.register).toHaveBeenCalled();
+    expect(authService.register).toHaveBeenCalledWith(registerRequest);
     expect(router.navigate).toHaveBeenCalledWith(['/login']);
   });
 
@@ -73,7 +73,7 @@ describe('RegisterComponent', () => {
       component.registerForm.setValue(registerRequest);
       component.register();
 
-      expect(authService.register).toHaveBeenCalled();
+      expect(authService.register).toHaveBeenCalledWith(registerRequest);
       });
     })
 });
