@@ -3,6 +3,7 @@ import { provideHttpClient } from "@angular/common/http";
 import { HttpTestingController, provideHttpClientTesting } from "@angular/common/http/testing";
 import { provideRouter, Router } from "@angular/router";
 import { RegisterComponent } from "./register.component"
+import { LoginComponent } from "../login/login.component";
 import { environment } from "../../../../env/env.dev";
 import { apiAuth, userRegisteredSuccessfully } from "../../../shared/constants/constants";
 import { registerRequest } from "../../../shared/mocks/user.mock";
@@ -16,7 +17,7 @@ describe('RegisterComponent Integration', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [RegisterComponent],
-      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([{ path: 'login', component: RegisterComponent }])]
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([{ path: 'login', component: LoginComponent }])]
     });
     fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.debugElement.componentInstance;
@@ -31,12 +32,12 @@ describe('RegisterComponent Integration', () => {
     fixture.nativeElement.querySelector('button[type="submit"]').click();
     tick();
 
-    const request = httpMock.expectOne(`${environment.baseUrl}/${apiAuth}/register`);
-    request.flush({ message: userRegisteredSuccessfully });
+    const testRequest = httpMock.expectOne(`${environment.baseUrl}/${apiAuth}/register`);
+    testRequest.flush({ message: userRegisteredSuccessfully });
     tick();
 
-    expect(request.request.method).toBe('POST');
-    expect(request.request.body).toEqual(registerRequest);
+    expect(testRequest.request.method).toBe('POST');
+    expect(testRequest.request.body).toEqual(registerRequest);
     expect(router.url).toBe('/login');
   }));
 
@@ -50,12 +51,12 @@ describe('RegisterComponent Integration', () => {
       fixture.nativeElement.querySelector('button[type="submit"]').click();
       tick();
 
-      const request = httpMock.expectOne(`${environment.baseUrl}/${apiAuth}/register`);
-      request.flush({ title: title, detail: detail }, { status: 409, statusText: 'Conflict' });
+      const testRequest = httpMock.expectOne(`${environment.baseUrl}/${apiAuth}/register`);
+      testRequest.flush({ title, detail }, { status: 409, statusText: 'Conflict' });
       tick();
 
-      expect(request.request.method).toBe('POST');
-      expect(request.request.body).toEqual(registerRequest);
+      expect(testRequest.request.method).toBe('POST');
+      expect(testRequest.request.body).toEqual(registerRequest);
       expect(router.url).not.toBe('/login');
       }));
     });
