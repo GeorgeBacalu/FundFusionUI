@@ -1,22 +1,23 @@
-<p-toast></p-toast>
-<form [formGroup]="loginForm" (ngSubmit)="login()">
-  <p-card header="Login" class="w-50">
-    <div class="field">
-      <label for="email">Email</label>
-      <input type="text" id="email" formControlName="email" pInputText class="w-full" placeholder="Enter your email" />
-      <small class="block text-red-500" *ngIf="email.invalid && (email.dirty || email.touched)">
-        <div *ngIf="email.errors?.['required']">Email is required</div>
-        <div *ngIf="email.errors?.['email']">Invalid email address</div>
-      </small>
-    </div>
-    <div class="field">
-      <label for="password">Password</label>
-      <p-password inputId="password" formControlName="password" inputStyleClass="w-full" styleClass="w-full" placeholder="Enter your password" [feedback]="false" [toggleMask]="true" />
-      <small class="block text-red-500" *ngIf="password.invalid && (password.dirty || password.touched)">
-        <div *ngIf="password.errors?.['required']">Password is required</div>
-      </small>
-    </div>
-    <p-button type="submit" label="Login" styleClass="w-full" [disabled]="loginForm.invalid"></p-button>
-    <div class="mt-2">Don't have an account? <a routerLink="/register" class="text-primary no-underline">Register</a></div>
-  </p-card>
-</form>
+<div class="flex justify-content-center align-items-center h-screen">
+  <form [formGroup]="loginForm" (ngSubmit)="login()">
+    <p-card header="Login" class="w-50">
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="text" id="email" formControlName="email" pInputText class="w-full" placeholder="Enter your email" />
+        <small class="block text-red-500" *ngIf="email.invalid && (email.dirty || email.touched)">
+          <div *ngIf="email.errors?.['required']">Email is required</div>
+          <div *ngIf="email.errors?.['email']">Invalid email address</div>
+        </small>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <p-password inputId="password" formControlName="password" inputStyleClass="w-full" styleClass="w-full" placeholder="Enter your password" [feedback]="false" [toggleMask]="true" />
+        <small class="block text-red-500" *ngIf="password.invalid && (password.dirty || password.touched)">
+          <div *ngIf="password.errors?.['required']">Password is required</div>
+        </small>
+      </div>
+      <p-button type="submit" label="Login" styleClass="w-full" [disabled]="loginForm.invalid"></p-button>
+      <div class="mt-2">Don't have an account? <a routerLink="/register" class="text-primary no-underline">Register</a></div>
+    </p-card>
+  </form>
+</div>
