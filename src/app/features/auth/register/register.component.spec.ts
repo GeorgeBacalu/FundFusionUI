@@ -4,6 +4,7 @@ import { provideRouter, Router } from "@angular/router";
 import { of, throwError } from "rxjs";
 import { RegisterComponent } from "./register.component";
 import { AuthService } from "../../../core/services/auth.service";
+import { MessageService } from "primeng/api";
 import { registerRequest } from "../../../shared/mocks/user.mock";
 import { userRegisteredSuccessfully } from "../../../shared/constants/constants";
 
@@ -13,12 +14,12 @@ describe('RegisterComponent', () => {
   let authService: jasmine.SpyObj<AuthService>;
   let router: Router;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [RegisterComponent],
-      providers: [provideRouter([]), { provide: AuthService, useValue: jasmine.createSpyObj('AuthService', ['register']) }]
-    });
-    component = TestBed.createComponent(RegisterComponent).debugElement.componentInstance;
+      providers: [provideRouter([]), { provide: AuthService, useValue: jasmine.createSpyObj('AuthService', ['register']) }, MessageService]
+    }).compileComponents();
+    component = TestBed.createComponent(RegisterComponent).componentInstance;
     form = component.registerForm.controls;
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
     router = TestBed.inject(Router);

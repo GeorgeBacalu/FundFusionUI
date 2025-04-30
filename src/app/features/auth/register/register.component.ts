@@ -6,7 +6,6 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
-import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../core/services/auth.service';
 import { passwordMatchValidator } from '../../../shared/validators/password-match.validator';
@@ -14,8 +13,7 @@ import { passwordMatchValidator } from '../../../shared/validators/password-matc
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [NgIf, RouterModule, ReactiveFormsModule, ButtonModule, CardModule, InputTextModule, PasswordModule, ToastModule],
-  providers: [MessageService],
+  imports: [NgIf, RouterModule, ReactiveFormsModule, ButtonModule, CardModule, InputTextModule, PasswordModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })

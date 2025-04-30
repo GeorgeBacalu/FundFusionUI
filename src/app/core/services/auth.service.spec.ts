@@ -10,8 +10,8 @@ describe('AuthService', () => {
   let authService: AuthService;
   let httpMock: HttpTestingController;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting(), AuthService] });
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting(), AuthService] }).compileComponents();
     authService = TestBed.inject(AuthService);
     httpMock = TestBed.inject(HttpTestingController);
   });

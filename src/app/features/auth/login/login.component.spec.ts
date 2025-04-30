@@ -4,6 +4,7 @@ import { provideRouter, Router } from "@angular/router";
 import { of, throwError } from "rxjs";
 import { LoginComponent } from "./login.component"
 import { AuthService } from "../../../core/services/auth.service";
+import { MessageService } from "primeng/api";
 import { loginRequest } from "../../../shared/mocks/user.mock";
 import { accountNotFound, genericError, invalidCredentials } from "../../../shared/constants/constants";
 
@@ -13,12 +14,12 @@ describe('LoginComponent', () => {
   let authService: jasmine.SpyObj<AuthService>;
   let router: Router;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [LoginComponent],
-      providers: [provideRouter([]), { provide: AuthService, useValue: jasmine.createSpyObj('AuthService', ['login']) }]
-    });
-    component = TestBed.createComponent(LoginComponent).debugElement.componentInstance;
+      providers: [provideRouter([]), { provide: AuthService, useValue: jasmine.createSpyObj('AuthService', ['login']) }, MessageService]
+    }).compileComponents();
+    component = TestBed.createComponent(LoginComponent).componentInstance;
     form = component.loginForm.controls;
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
     router = TestBed.inject(Router);
