@@ -15,7 +15,7 @@ import { accountNotFound, genericError, invalidCredentials, userLoggedInSuccessf
   standalone: true,
   imports: [NgIf, RouterModule, ReactiveFormsModule, ButtonModule, CardModule, InputTextModule, PasswordModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
   loginForm!: FormGroup;

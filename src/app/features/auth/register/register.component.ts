@@ -15,7 +15,7 @@ import { passwordMatchValidator } from '../../../shared/validators/password-matc
   standalone: true,
   imports: [NgIf, RouterModule, ReactiveFormsModule, ButtonModule, CardModule, InputTextModule, PasswordModule],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.scss'
+  styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent {
   registerForm!: FormGroup;
