@@ -4,6 +4,7 @@ import { HttpTestingController, provideHttpClientTesting } from "@angular/common
 import { provideRouter, Router } from "@angular/router";
 import { RegisterComponent } from "./register.component"
 import { LoginComponent } from "../login/login.component";
+import { MessageService } from "primeng/api";
 import { environment } from "../../../../env/env.dev";
 import { apiAuth, userRegisteredSuccessfully } from "../../../shared/constants/constants";
 import { registerRequest } from "../../../shared/mocks/user.mock";
@@ -14,13 +15,13 @@ describe('RegisterComponent Integration', () => {
   let httpMock: HttpTestingController;
   let router: Router;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [RegisterComponent],
-      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([{ path: 'login', component: LoginComponent }])]
-    });
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([{ path: 'login', component: LoginComponent }]), MessageService]
+    }).compileComponents();
     fixture = TestBed.createComponent(RegisterComponent);
-    component = fixture.debugElement.componentInstance;
+    component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
     router = TestBed.inject(Router);
   });

@@ -1,8 +1,10 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from "@angular/core/testing";
-import { LoginComponent } from "./login.component";
+import { provideHttpClient } from "@angular/common/http";
 import { HttpTestingController, provideHttpClientTesting } from "@angular/common/http/testing";
 import { provideRouter, Router } from "@angular/router";
-import { provideHttpClient } from "@angular/common/http";
+import { LoginComponent } from "./login.component";
+import { HomeComponent } from "../../home/home.component";
+import { MessageService } from "primeng/api";
 import { environment } from "../../../../env/env.dev";
 import { apiAuth } from "../../../shared/constants/constants";
 import { loginRequest } from "../../../shared/mocks/user.mock";
@@ -14,13 +16,13 @@ describe('LoginComponent Integration', () => {
   let httpMock: HttpTestingController;
   let router: Router;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [LoginComponent],
-      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([{ path: '', component: LoginComponent }])]
-    })
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([{ path: '', component: HomeComponent }]), MessageService]
+    }).compileComponents();
     fixture = TestBed.createComponent(LoginComponent);
-    component = fixture.debugElement.componentInstance;
+    component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
     router = TestBed.inject(Router);
   })
