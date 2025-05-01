@@ -12,16 +12,18 @@ describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let form: FormGroup['controls'];
   let authService: jasmine.SpyObj<AuthService>;
+  let messageService: jasmine.SpyObj<MessageService>;
   let router: Router;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(() => {
+    TestBed.configureTestingModule({
       imports: [RegisterComponent],
-      providers: [provideRouter([]), { provide: AuthService, useValue: jasmine.createSpyObj('AuthService', ['register']) }, MessageService]
+      providers: [provideRouter([]), { provide: AuthService, useValue: jasmine.createSpyObj('AuthService', ['register']) }, { provide: MessageService, useValue: jasmine.createSpyObj('MessageService', ['add']) }]
     }).compileComponents();
     component = TestBed.createComponent(RegisterComponent).componentInstance;
     form = component.registerForm.controls;
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
+    messageService = TestBed.inject(MessageService) as jasmine.SpyObj<MessageService>;
     router = TestBed.inject(Router);
   });
 
@@ -29,7 +31,7 @@ describe('RegisterComponent', () => {
 
   it('should initialize with empty form', () => {
     expect(component.registerForm.valid).toBeFalse();
-    expect(Object.values(form).every(control => control.value === '')).toBeTrue();
+    Object.values(form).forEach(control => expect(control.value).toBe(''));
   });
 
   it('should invalidate incorrect inputs', () => {
@@ -62,6 +64,7 @@ describe('RegisterComponent', () => {
     component.register();
 
     expect(authService.register).toHaveBeenCalledWith(registerRequest);
+    expect(messageService.add).toHaveBeenCalledWith(jasmine.objectContaining({ severity: 'success', summary: 'Success', detail: userRegisteredSuccessfully }));
     expect(router.navigate).toHaveBeenCalledWith(['/login']);
   });
 
@@ -75,6 +78,7 @@ describe('RegisterComponent', () => {
       component.register();
 
       expect(authService.register).toHaveBeenCalledWith(registerRequest);
+      expect(messageService.add).toHaveBeenCalledWith(jasmine.objectContaining({ severity: 'error', summary: title, detail }))
       });
     })
 });

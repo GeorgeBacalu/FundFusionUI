@@ -6,22 +6,24 @@ import { LoginComponent } from "./login.component"
 import { AuthService } from "../../../core/services/auth.service";
 import { MessageService } from "primeng/api";
 import { loginRequest } from "../../../shared/mocks/user.mock";
-import { accountNotFound, genericError, invalidCredentials } from "../../../shared/constants/constants";
+import { accountNotFound, genericError, invalidCredentials, userLoggedInSuccessfully } from "../../../shared/constants/constants";
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let form: FormGroup['controls'];
   let authService: jasmine.SpyObj<AuthService>;
+  let messageService: jasmine.SpyObj<MessageService>;
   let router: Router;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(() => {
+    TestBed.configureTestingModule({
       imports: [LoginComponent],
-      providers: [provideRouter([]), { provide: AuthService, useValue: jasmine.createSpyObj('AuthService', ['login']) }, MessageService]
+      providers: [provideRouter([]), { provide: AuthService, useValue: jasmine.createSpyObj('AuthService', ['login']) }, { provide: MessageService, useValue: jasmine.createSpyObj('MessageService', ['add']) }]
     }).compileComponents();
     component = TestBed.createComponent(LoginComponent).componentInstance;
     form = component.loginForm.controls;
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
+    messageService = TestBed.inject(MessageService) as jasmine.SpyObj<MessageService>;
     router = TestBed.inject(Router);
   });
 
@@ -55,6 +57,7 @@ describe('LoginComponent', () => {
     component.login();
     
     expect(authService.login).toHaveBeenCalledWith(loginRequest);
+    expect(messageService.add).toHaveBeenCalledWith(jasmine.objectContaining({ severity: 'success', summary: 'Success', detail: userLoggedInSuccessfully }));
     expect(router.navigate).toHaveBeenCalledWith(['/']);
   });
 
@@ -68,6 +71,7 @@ describe('LoginComponent', () => {
       component.login();
 
       expect(authService.login).toHaveBeenCalledWith(loginRequest);
+      expect(messageService.add).toHaveBeenCalledWith(jasmine.objectContaining({ severity: 'error', summary: title, detail }));
     })
    });
 })
