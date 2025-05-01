@@ -9,9 +9,9 @@ describe('authGuard', () => {
 
   const executeGuard: CanActivateFn = (...guardParameters) => TestBed.runInInjectionContext(() => authGuard(...guardParameters));
 
-  beforeEach(async () => {
+  beforeEach(() => {
     router = jasmine.createSpyObj('Router', ['navigate']);
-    await TestBed.configureTestingModule({ providers: [{ provide: Router, useValue: router }]});
+    TestBed.configureTestingModule({ providers: [{ provide: Router, useValue: router }]});
     mockRoute = {} as ActivatedRouteSnapshot;
     mockState = { url: '/' } as RouterStateSnapshot;
   });

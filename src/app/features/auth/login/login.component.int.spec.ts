@@ -16,8 +16,8 @@ describe('LoginComponent Integration', () => {
   let httpMock: HttpTestingController;
   let router: Router;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(() => {
+    TestBed.configureTestingModule({
       imports: [LoginComponent],
       providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([{ path: '', component: HomeComponent }]), MessageService]
     }).compileComponents();

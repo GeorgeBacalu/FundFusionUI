@@ -15,8 +15,8 @@ describe('RegisterComponent Integration', () => {
   let httpMock: HttpTestingController;
   let router: Router;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(() => {
+    TestBed.configureTestingModule({
       imports: [RegisterComponent],
       providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([{ path: 'login', component: LoginComponent }]), MessageService]
     }).compileComponents();

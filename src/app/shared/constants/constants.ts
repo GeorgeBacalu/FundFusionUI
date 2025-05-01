@@ -1,5 +1,6 @@
 export const userRegisteredSuccessfully = "User registered successfully";
 export const userLoggedInSuccessfully = "User logged in successfully";
+export const userLoggedOutSuccessfully = "User logged out successfully";
 
 export const accountNotFound = 'No account found with this email';
 export const invalidCredentials = 'Incorrect email or password';
