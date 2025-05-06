@@ -4,7 +4,7 @@ import { HttpTestingController, provideHttpClientTesting } from "@angular/common
 import { AuthService } from "./auth.service";
 import { environment } from "../../../env/env.dev";
 import { apiAuth } from "../../shared/constants/constants";
-import { loginRequest, registerRequest } from "../../shared/mocks/user.mock";
+import { loginRequest, refreshRequest, registerRequest } from "../../shared/mocks/user.mock";
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -31,6 +31,15 @@ describe('AuthService', () => {
     
     expect(testRequest.request.method).toBe('POST');
     expect(testRequest.request.body).toEqual(loginRequest);
+    testRequest.flush({});
+  });
+
+  it('should call the refresh token endpoint', () => {
+    authService.refresh(refreshRequest).subscribe();
+    const testRequest = httpMock.expectOne(`${environment.baseUrl}/${apiAuth}/refresh`);
+
+    expect(testRequest.request.method).toBe('POST');
+    expect(testRequest.request.body).toEqual(refreshRequest);
     testRequest.flush({});
   });
 });
