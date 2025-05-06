@@ -1,4 +1,5 @@
 import { LoginRequest } from "../../features/auth/interfaces/login.interface";
+import { RefreshRequest } from "../../features/auth/interfaces/refresh.interface";
 import { RegisterRequest } from "../../features/auth/interfaces/register.interface";
 
 export const registerRequest: RegisterRequest = {
@@ -10,3 +11,5 @@ export const registerRequest: RegisterRequest = {
 };
 
 export const loginRequest: LoginRequest = { email: 'john.doe@email.com', password: 'JohnDoePassword0!'};
+
+export const refreshRequest: RefreshRequest = { refreshToken: "refresh-token" };

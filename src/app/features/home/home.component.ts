@@ -14,7 +14,7 @@ import { userLoggedOutSuccessfully } from '../../shared/constants/constants';
 export class HomeComponent {
   constructor(private messageService: MessageService, private router: Router) {}
 
-  logout = () => {
+  logout = (): void => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     this.messageService.add({ severity: 'success', summary: 'Success', detail: userLoggedOutSuccessfully });
