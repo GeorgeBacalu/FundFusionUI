@@ -6,6 +6,7 @@ import { apiAuth } from '../../shared/constants/constants';
 import { RegisterRequest } from '../../features/auth/interfaces/register.interface';
 import { LoginRequest, LoginResponse } from '../../features/auth/interfaces/login.interface';
 import { RefreshRequest, RefreshResponse } from '../../features/auth/interfaces/refresh.interface';
+import { ChangePasswordRequest } from '../../features/auth/interfaces/change-password.interface';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -24,4 +25,10 @@ export class AuthService {
     refresh(payload: RefreshRequest): Observable<RefreshResponse> {
       return this.http.post<RefreshResponse>(`${this.baseUrl}/${apiAuth}/refresh`, payload);
     }
+
+    changePassword(payload: ChangePasswordRequest): Observable<{ message: string }> {
+      return this.http.post<{ message: string }>(`${this.baseUrl}/${apiAuth}/change-password`, payload);
+    }
+
+    logout = () => (localStorage.removeItem('accessToken'), localStorage.removeItem('refreshToken'));
 }
