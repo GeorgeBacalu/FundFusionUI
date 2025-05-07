@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { NgIf } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../core/services/auth.service';
+import { passwordRegex } from '../../../shared/constants/constants';
 import { passwordMatchValidator } from '../../../shared/validators/password-match.validator';
 
 @Component({
@@ -24,7 +25,7 @@ export class RegisterComponent {
     this.registerForm = this.formBuilder.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.pattern(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_])\S{6,}$/)]], // Rules: +1 digit, +1 lowercase letter, +1 uppercase letter, +1 special character, +6 chars, no whitespace
+      password: ['', [Validators.required, Validators.pattern(passwordRegex)]],
       confirmedPassword: ['', Validators.required],
       phone: ['', Validators.required]
     }, { validators: passwordMatchValidator });

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NgIf } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
@@ -21,10 +21,7 @@ export class LoginComponent {
   loginForm!: FormGroup;
 
   constructor(private formBuilder: FormBuilder, private authService: AuthService, private messageService: MessageService, private router: Router) {
-    this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
-    });
+    this.loginForm = this.formBuilder.group({ email: ['', [Validators.required, Validators.email]], password: ['', Validators.required] });
   }
 
   get email() { return this.loginForm.controls['email']; }

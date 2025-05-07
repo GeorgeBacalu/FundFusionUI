@@ -15,6 +15,7 @@
         <small class="block text-red-500" *ngIf="password.invalid && (password.dirty || password.touched)">
           <div *ngIf="password.errors?.['required']">Password is required</div>
         </small>
+        <div class="mt-1"><a routerLink="/forgot-password" class="text-primary no-underline">Forgot your password?</a></div>
       </div>
       <p-button type="submit" label="Login" styleClass="w-full" [disabled]="loginForm.invalid"></p-button>
       <div class="mt-2">Don't have an account? <a routerLink="/register" class="text-primary no-underline">Register</a></div>
