@@ -40,6 +40,12 @@
         </small>
       </div>
       <p-button type="submit" label="Register" styleClass="w-full" [disabled]="registerForm.invalid"></p-button>
+      <p-divider align="center" type="solid">OR</p-divider>
+      <div class="space-y-2">
+        <app-oauth-button provider="Google" />
+        <app-oauth-button provider="Microsoft" />
+        <app-oauth-button provider="Twitter" />
+      </div>
       <div class="mt-2">Already have an account? <a routerLink="/login" class="text-primary no-underline">Login</a></div>
     </p-card>
   </form>
