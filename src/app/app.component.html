@@ -1,2 +1,5 @@
 <p-toast></p-toast>
+<div *ngIf="loading$ | async" class="loading-overlay">
+  <p-progressspinner strokeWidth="5"></p-progressspinner>
+</div>
 <router-outlet></router-outlet>
