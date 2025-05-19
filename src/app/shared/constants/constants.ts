@@ -16,3 +16,4 @@ export const invalidPasswordResetLink = "This password reset link is invalid";
 export const resetLinkExpiredOrUsed = "This reset link has expired or has already been used";
 
 export const apiAuth = "api/auth";
+export const apiLocation = "api/locations";

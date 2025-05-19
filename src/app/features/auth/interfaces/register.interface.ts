@@ -4,4 +4,7 @@ export interface RegisterRequest {
   password: string;
   confirmedPassword: string;
   phone: string;
+  country: string;
+  state: string;
+  city: string;
 }

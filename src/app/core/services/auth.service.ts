@@ -12,33 +12,21 @@ import { ResetPasswordRequest } from '../../features/auth/interfaces/reset-passw
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-    private readonly baseUrl = environment.baseUrl;
+  private readonly baseUrl = environment.baseUrl;
 
-    constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {}
 
-    register(payload: RegisterRequest): Observable<{ message: string }> {
-      return this.http.post<{ message: string }>(`${this.baseUrl}/${apiAuth}/register`, payload);
-    }
+  register = (payload: RegisterRequest): Observable<{ message: string }> => this.http.post<{ message: string }>(`${this.baseUrl}/${apiAuth}/register`, payload);
 
-    login(payload: LoginRequest): Observable<LoginResponse> {
-      return this.http.post<LoginResponse>(`${this.baseUrl}/${apiAuth}/login`, payload);
-    }
+  login = (payload: LoginRequest): Observable<LoginResponse> => this.http.post<LoginResponse>(`${this.baseUrl}/${apiAuth}/login`, payload)
 
-    refresh(payload: RefreshRequest): Observable<RefreshResponse> {
-      return this.http.post<RefreshResponse>(`${this.baseUrl}/${apiAuth}/refresh`, payload);
-    }
+  refresh = (payload: RefreshRequest): Observable<RefreshResponse> => this.http.post<RefreshResponse>(`${this.baseUrl}/${apiAuth}/refresh`, payload)
 
-    changePassword(payload: ChangePasswordRequest): Observable<{ message: string }> {
-      return this.http.post<{ message: string }>(`${this.baseUrl}/${apiAuth}/change-password`, payload);
-    }
+  changePassword = (payload: ChangePasswordRequest): Observable<{ message: string }> => this.http.post<{ message: string }>(`${this.baseUrl}/${apiAuth}/change-password`, payload)
 
-    forgotPassword(payload: ForgotPasswordRequest): Observable<{ message: string }> {
-      return this.http.post<{ message: string }>(`${this.baseUrl}/${apiAuth}/forgot-password`, payload);
-    }
+  forgotPassword = (payload: ForgotPasswordRequest): Observable<{ message: string }> => this.http.post<{ message: string }>(`${this.baseUrl}/${apiAuth}/forgot-password`, payload);
 
-    resetPassword(payload: ResetPasswordRequest): Observable<{ message: string }> {
-      return this.http.post<{ message: string }>(`${this.baseUrl}/${apiAuth}/reset-password`, payload);
-    }
+  resetPassword = (payload: ResetPasswordRequest): Observable<{ message: string }> => this.http.post<{ message: string }>(`${this.baseUrl}/${apiAuth}/reset-password`, payload);
 
-    logout = () => (localStorage.removeItem('accessToken'), localStorage.removeItem('refreshToken'));
+  logout = (): void => (localStorage.removeItem('accessToken'), localStorage.removeItem('refreshToken'));
 }
