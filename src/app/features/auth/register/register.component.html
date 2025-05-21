@@ -34,7 +34,10 @@
       </div>
       <div class="field">
         <label for="phone">Phone</label>
-        <input type="text" id="phone" formControlName="phone" pInputText class="w-full" placeholder="Enter your phone number" />
+        <div class="flex gap-2 w-full">
+          <p-select [options]="phonesInfo" optionLabel="displayName" formControlName="phoneInfo" class="w-6" placeholder="Country (Prefix)" (onChange)="onCountryChange()"></p-select>
+          <ng-container *ngIf="mask"><p-inputMask [mask]="mask" [autoClear]="false" formControlName="phone" class="w-7" placeholder="(999) 999-9999"></p-inputMask></ng-container>
+        </div>
         <small class="block text-red-500" *ngIf="phone.invalid && (phone.dirty || phone.touched)">
           <div *ngIf="phone.errors?.['required']">Phone is required</div>
         </small>
