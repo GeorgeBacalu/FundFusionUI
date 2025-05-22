@@ -16,8 +16,9 @@ export interface City {
   name: string;
 }
 
-export interface PhoneInfoResponse {
-  displayName: string;
+export interface CountryPhoneInfoResponse {
+  label: string;
+  code: string;
   prefix: string;
   length: number;
 }

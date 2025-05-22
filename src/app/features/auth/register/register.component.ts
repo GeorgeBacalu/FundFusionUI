@@ -15,7 +15,10 @@ import { AuthService } from '../../../core/services/auth.service';
 import { LocationService } from '../../../core/services/location.service';
 import { passwordRegex } from '../../../shared/constants/constants';
 import { passwordMatchValidator } from '../../../shared/validators/password-match.validator';
-import { Country, State, City, PhoneInfoResponse } from '../../../shared/interfaces/location/location.interface';
+import { phoneValidator } from '../../../shared/validators/phone.validator';
+import { Country, State, City, CountryPhoneInfoResponse } from '../../../shared/interfaces/location/location.interface';
+import { AsYouType, getExampleNumber } from 'libphonenumber-js';
+import examples from 'libphonenumber-js/examples.mobile.json';
 
 @Component({
   selector: 'app-register',
@@ -29,7 +32,7 @@ export class RegisterComponent implements OnInit {
   countries: Country[] = [];
   states: State[] = [];
   cities: City[] = [];
-  phonesInfo: PhoneInfoResponse[] = [];
+  countryPhonesInfo: CountryPhoneInfoResponse[] = [];
   mask: string = '';
 
   constructor(private formBuilder: FormBuilder, private authService: AuthService, private locationService: LocationService, private messageService: MessageService, private router: Router) {
@@ -39,11 +42,11 @@ export class RegisterComponent implements OnInit {
       password: ['', [Validators.required, Validators.pattern(passwordRegex)]],
       confirmedPassword: ['', Validators.required],
       phone: ['', [Validators.required]],
-      phoneInfo: [null, Validators.required],
+      countryPhoneInfo: [null, Validators.required],
       country: [null, Validators.required],
       state: [null, Validators.required],
       city: [null, Validators.required],
-    }, { validators: passwordMatchValidator });
+    }, { validators: [passwordMatchValidator, phoneValidator] });
   }
 
   get name() { return this.registerForm.controls['name']; }
@@ -51,11 +54,11 @@ export class RegisterComponent implements OnInit {
   get password() { return this.registerForm.controls['password']; }
   get confirmedPassword() { return this.registerForm.controls['confirmedPassword']; }
   get phone() { return this.registerForm.controls['phone']; }
-  get phoneInfo() { return this.registerForm.controls['phoneInfo']; }
+  get countryPhoneInfo() { return this.registerForm.controls['countryPhoneInfo']; }
 
   ngOnInit(): void {
     this.locationService.getCountries().subscribe(countries => this.countries = countries);
-    this.locationService.getPhonesInfo().subscribe(phonesInfo => this.phonesInfo = phonesInfo);
+    this.locationService.getCountryPhonesInfo().subscribe(countryPhonesInfo => this.countryPhonesInfo = countryPhonesInfo);
   }
 
   loadStates(): void {
@@ -77,13 +80,17 @@ export class RegisterComponent implements OnInit {
   }
 
   onCountryChange(): void {
-    this.mask = this.phoneInfo.value.prefix && this.phoneInfo.value.length ? `${this.phoneInfo.value.prefix} ${'9'.repeat(this.phoneInfo.value.length)}` : '';
     this.phone.reset();
+    const { prefix, code, length } = this.countryPhoneInfo.value || {};
+    if (!prefix || !code) return void (this.mask = '');
+
+    const example = getExampleNumber(code, examples);
+    this.mask = example ? `${prefix}${new AsYouType(code).input(example.number).replace(/\d/g, '9').slice(prefix.length)}` : `'${prefix}' ${'9'.repeat(length - prefix.length)}`;
   }
 
   register = (): void => {
     const { country, state, city, ...rest } = this.registerForm.value;
-    this.authService.register({ ...rest, phone: `${this.phoneInfo.value.prefix} ${this.phone.value}`, country: country.name, state: state.name, city: city.name }).subscribe({
+    this.authService.register({ ...rest, phone: this.phone.value, country: country.name, state: state.name, city: city.name }).subscribe({
       next: ({ message }) => (this.messageService.add({ severity: 'success', summary: 'Success', detail: message }), this.router.navigate(['/login'])),
       error: ({ error }) => this.messageService.add({ severity: 'error', summary: error?.title || 'Error', detail: error?.detail || 'Registration failed' })
     });

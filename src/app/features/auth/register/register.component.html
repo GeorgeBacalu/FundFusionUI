@@ -35,12 +35,13 @@
       <div class="field">
         <label for="phone">Phone</label>
         <div class="flex gap-2 w-full">
-          <p-select [options]="phonesInfo" optionLabel="displayName" formControlName="phoneInfo" class="w-6" placeholder="Country (Prefix)" (onChange)="onCountryChange()"></p-select>
+          <p-select [options]="countryPhonesInfo" optionLabel="label" formControlName="countryPhoneInfo" class="w-6" placeholder="Country (Prefix)" (onChange)="onCountryChange()"></p-select>
           <ng-container *ngIf="mask"><p-inputMask [mask]="mask" [autoClear]="false" formControlName="phone" class="w-7" placeholder="(999) 999-9999"></p-inputMask></ng-container>
         </div>
         <small class="block text-red-500" *ngIf="phone.invalid && (phone.dirty || phone.touched)">
           <div *ngIf="phone.errors?.['required']">Phone is required</div>
         </small>
+        <small class="block text-red-500" *ngIf="registerForm.errors?.['invalidPhone'] && (phone.dirty || phone.touched)">Invalid phone number</small>
       </div>
       <div class="field">
         <label for="country">Country</label>
