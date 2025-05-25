@@ -14,7 +14,7 @@ import { apiAuth } from '../../constants/constants';
 export class OauthButtonComponent {
   @Input() provider: 'Google' | 'Microsoft' | 'Twitter' = 'Google';
 
-  get logo(): string { return { Google: 'assets/images/google.jpeg', Microsoft: 'assets/images/microsoft.jpeg', Twitter: 'assets/images/twitter.jpeg' }[this.provider]; }
+  get logo(): string { return { Google: 'assets/images/google.svg', Microsoft: 'assets/images/microsoft.svg', Twitter: 'assets/images/twitter.svg' }[this.provider]; }
 
   onClick = () => window.location.href = `${environment.baseUrl}/${apiAuth}/oauth/${this.provider.toLowerCase()}`;
 }
