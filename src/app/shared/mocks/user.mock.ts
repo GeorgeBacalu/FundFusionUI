@@ -7,7 +7,10 @@ export const registerRequest: RegisterRequest = {
   email: 'john.doe@email.com',
   password: 'JohnDoePassword0!',
   confirmedPassword: 'JohnDoePassword0!',
-  phone: '+1202-555-0125'
+  phone: '+1202-555-0125',
+  country: 'US',
+  state: 'DC',
+  city: 'Washington',
 };
 
 export const loginRequest: LoginRequest = { email: 'john.doe@email.com', password: 'JohnDoePassword0!'};
