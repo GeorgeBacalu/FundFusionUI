@@ -7,8 +7,8 @@ import { CardModule } from 'primeng/card';
 import { PasswordModule } from 'primeng/password';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../core/services/auth.service';
-import { passwordChangedSuccessfully, passwordRegex } from '../../../shared/constants/constants';
 import { changePasswordValidator } from '../../../shared/validators/change-password.validator';
+import { passwordChangedSuccessfully, passwordChangeFailed, passwordRegex } from '../../../shared/constants/constants';
 
 @Component({
   selector: 'app-change-password',
@@ -34,6 +34,6 @@ export class ChangePasswordComponent {
 
   changePassword = () => this.authService.changePassword(this.changePasswordForm.value).subscribe({
     next: () => (this.authService.logout(), this.messageService.add({ severity: 'success', summary: 'Success', detail: passwordChangedSuccessfully }), this.router.navigate(['/login'])),
-    error: ({ error }) => this.messageService.add({ severity: 'error', summary: 'Check your input', detail: error?.detail || 'Password change failed' })
+    error: ({ error }) => this.messageService.add({ severity: 'error', summary: 'Check your input', detail: error?.detail || passwordChangeFailed })
   });
 }

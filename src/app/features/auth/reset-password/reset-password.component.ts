@@ -8,7 +8,7 @@ import { PasswordModule } from 'primeng/password';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../core/services/auth.service';
 import { resetPasswordMatchValidator } from '../../../shared/validators/reset-password-match.validator';
-import { invalidResetLink, passwordRegex, resetLinkExpiredOrUsed } from '../../../shared/constants/constants';
+import { invalidResetLink, passwordRegex, passwordResetFailed, resetLinkExpiredOrUsed } from '../../../shared/constants/constants';
 
 @Component({
   selector: 'app-reset-password',
@@ -35,7 +35,7 @@ export class ResetPasswordComponent {
     if (!token) return this.messageService.add({ severity: 'error', summary: 'Invalid link', detail: invalidResetLink });
     this.authService.resetPassword({ token, ...this.resetPasswordForm.value }).subscribe({
       next: ({ message }) => (this.messageService.add({ severity: 'success', summary: 'Success', detail: message }), this.router.navigate(['/login'])),
-      error: ({ error }) => this.messageService.add({ severity: 'error', summary: 'Check your input', detail: error?.detail?.includes('used') ? resetLinkExpiredOrUsed : (error?.detail || 'Password reset failed') })
+      error: ({ error }) => this.messageService.add({ severity: 'error', summary: 'Check your input', detail: error?.detail?.includes('used') ? resetLinkExpiredOrUsed : (error?.detail || passwordResetFailed) })
     });
   }
 }

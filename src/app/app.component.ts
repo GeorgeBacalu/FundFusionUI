@@ -3,15 +3,16 @@ import { AsyncPipe, NgIf } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { Observable } from 'rxjs';
 import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { LoadingService } from './core/services/loading.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [NgIf, RouterOutlet, ToastModule, ProgressSpinnerModule, AsyncPipe],
-  providers: [MessageService],
+  imports: [NgIf, RouterOutlet, ToastModule, ConfirmDialogModule, ProgressSpinnerModule, AsyncPipe],
+  providers: [MessageService, ConfirmationService],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })

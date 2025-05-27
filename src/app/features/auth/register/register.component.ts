@@ -13,10 +13,10 @@ import { OauthButtonComponent } from "../../../shared/components/oauth-button/oa
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../core/services/auth.service';
 import { LocationService } from '../../../core/services/location.service';
-import { passwordRegex } from '../../../shared/constants/constants';
 import { passwordMatchValidator } from '../../../shared/validators/password-match.validator';
 import { phoneValidator } from '../../../shared/validators/phone.validator';
 import { Country, State, City, CountryPhoneInfoResponse } from '../../../shared/interfaces/location/location.interface';
+import { passwordRegex, registrationFailed } from '../../../shared/constants/constants';
 import { AsYouType, getExampleNumber } from 'libphonenumber-js';
 import examples from 'libphonenumber-js/examples.mobile.json';
 
@@ -92,7 +92,7 @@ export class RegisterComponent implements OnInit {
     const { country, state, city, ...rest } = this.registerForm.value;
     this.authService.register({ ...rest, phone: this.phone.value, country: country.name, state: state.name, city: city.name }).subscribe({
       next: ({ message }) => (this.messageService.add({ severity: 'success', summary: 'Success', detail: message }), this.router.navigate(['/login'])),
-      error: ({ error }) => this.messageService.add({ severity: 'error', summary: error?.title || 'Error', detail: error?.detail || 'Registration failed' })
+      error: ({ error }) => this.messageService.add({ severity: 'error', summary: error?.title || 'Error', detail: error?.detail || registrationFailed })
     });
   }
 }

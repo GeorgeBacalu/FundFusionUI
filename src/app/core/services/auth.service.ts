@@ -28,5 +28,7 @@ export class AuthService {
 
   resetPassword = (payload: ResetPasswordRequest): Observable<{ message: string }> => this.http.post<{ message: string }>(`${this.baseUrl}/${apiAuth}/reset-password`, payload);
 
+  deactivateAccount = (): Observable<{ message: string }> => this.http.delete<{ message: string }>(`${this.baseUrl}/${apiAuth}`);
+
   logout = (): void => (localStorage.removeItem('accessToken'), localStorage.removeItem('refreshToken'));
 }

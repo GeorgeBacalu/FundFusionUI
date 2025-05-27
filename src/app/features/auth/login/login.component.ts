@@ -10,7 +10,7 @@ import { DividerModule } from 'primeng/divider';
 import { OauthButtonComponent } from '../../../shared/components/oauth-button/oauth-button.component';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../core/services/auth.service';
-import { accountNotFound, genericError, invalidCredentials, userLoggedInSuccessfully } from '../../../shared/constants/constants';
+import { accountNotFound, genericError, invalidCredentials, loginFailed, userLoggedInSuccessfully } from '../../../shared/constants/constants';
 
 @Component({
   selector: 'app-login',
@@ -36,6 +36,6 @@ export class LoginComponent {
       this.messageService.add({ severity: 'success', summary: 'Success', detail: userLoggedInSuccessfully });
       this.router.navigate(['/']);
     },
-    error: ({ status }: { status: number }) => this.messageService.add({ severity: 'error', summary: 'Login failed', detail: { 404: accountNotFound, 400: invalidCredentials }[status] ?? genericError })
+    error: ({ status }: { status: number }) => this.messageService.add({ severity: 'error', summary: loginFailed, detail: { 404: accountNotFound, 400: invalidCredentials }[status] ?? genericError })
   })
 }
