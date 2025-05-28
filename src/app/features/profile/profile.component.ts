@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { forkJoin, map, switchMap } from 'rxjs';
 import { CardModule } from 'primeng/card';
 import { AvatarModule } from 'primeng/avatar';
 import { MenuModule } from 'primeng/menu';
@@ -14,7 +15,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { LocationService } from '../../core/services/location.service';
 import { GetProfileDataResponse, UserDto, UserSettingsDto, Theme } from '../../shared/interfaces/user/profile-data.interface';
 import { Country, State, City, Currency, Locale } from '../../shared/interfaces/location/location.interface';
-import { accountDeactivationFailed, profileLoadFailed } from '../../shared/constants/constants';
+import { accountDeactivationFailed, profileLoadFailed, countryNotFound, stateNotFound } from '../../shared/constants/constants';
 
 @Component({
   selector: 'app-profile',
@@ -59,43 +60,37 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.userService.getProfileData().subscribe({
-      next: ({ user, userSettings }) => {
-        this.profileData = { user, userSettings };
-
-        this.locationService.getCountries().subscribe((countries) => {
+    this.userService.getProfileData().pipe(switchMap(({ user, userSettings }) => {
+      this.profileData = { user, userSettings };
+      return forkJoin({ countries: this.locationService.getCountries(), currencies: this.locationService.getCurrencies(), locales: this.locationService.getLocales() }).pipe(
+        switchMap(({ countries, currencies, locales }) => {
           this.countries = countries;
-          const selectedCountry = countries.find(country => country.name === user.country)!;
+          this.currencies = currencies;
+          this.locales = locales;
+          const selectedCountry = countries.find(country => country.name === user.country);
+          
+          if (!selectedCountry) throw new Error(countryNotFound);
+          return forkJoin({ states: this.locationService.getStatesByCountryId(selectedCountry.id), selectedCountry: [selectedCountry] });
+        }),
+        switchMap(({ states, selectedCountry }) => {
+          this.states = states;
+          const selectedState = states.find(state => state.name === user.state);;
+          
+          if (!selectedState) throw new Error(stateNotFound);
+          return forkJoin({ cities: this.locationService.getCitiesByStateId(selectedState.id), selectedState: [selectedState], selectedCountry: [selectedCountry] });
+        }),
+        map(({ cities, selectedState, selectedCountry }) => {
+          this.cities = cities;
+          const selectedCity = cities.find(city => city.name === user.city);
+          const selectedCurrency = this.currencies.find(currency => currency.code === userSettings.currency);
+          const selectedLocale = this.locales.find(locale => locale.name === userSettings.language);
+          const themeMap: { [key: number]: Theme } = { 0: Theme.System, 1: Theme.Light, 2: Theme.Dark };
+          const selectedTheme = themeMap[Number(userSettings.theme)] ?? Theme.System;
 
-          this.locationService.getStatesByCountryId(selectedCountry.id).subscribe(states => {
-            this.states = states;
-            const selectedState = states.find(state => state.name === user.state)!;
-
-            this.locationService.getCitiesByStateId(selectedState.id).subscribe(cities => {
-              this.cities = cities;
-              const selectedCity = cities.find(city => city.name === user.city)!;
-
-              this.locationService.getCurrencies().subscribe(currencies => {
-                this.currencies = currencies;
-                const selectedCurrency = currencies.find(currency => currency.code === userSettings.currency)!;
-
-                this.locationService.getLocales().subscribe(locales => {
-                  this.locales = locales;
-                  const selectedLocale = locales.find(locale => locale.name === userSettings.language)!;
-
-                  const themeMap: { [key: number]: Theme } = { 0: Theme.System, 1: Theme.Light, 2: Theme.Dark };
-                  const selectedTheme = themeMap[userSettings.theme as unknown as number];
-
-                  this.profileForm.patchValue({ name: user.name, email: user.email, phone: user.phone, country: selectedCountry, state: selectedState, city: selectedCity, 
-                    currency: selectedCurrency, language: selectedLocale, theme: selectedTheme, emailNotify: userSettings.emailNotify, showLastLogin: userSettings.showLastLogin });
-                });
-              });
-            });
-          });
-        });
-      },
-      error: () => this.messageService.add({ severity: 'error', summary: 'Error', detail: profileLoadFailed }),
-    });
+          this.profileForm.patchValue({ name: user.name, email: user.email, phone: user.phone, country: selectedCountry, state: selectedState, city: selectedCity,
+            currency: selectedCurrency, language: selectedLocale, theme: selectedTheme, emailNotify: userSettings.emailNotify, showLastLogin: userSettings.showLastLogin });
+        }));
+    })).subscribe({ error: () => this.messageService.add({ severity: 'error', summary: 'Error', detail: profileLoadFailed }) });
   }
 
   onAvatarChange = (event: any) => console.log('Avatar changed:', event);

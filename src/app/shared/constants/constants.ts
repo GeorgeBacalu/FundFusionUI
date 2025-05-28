@@ -18,6 +18,9 @@ export const profileLoadFailed = "Failed to load profile data";
 export const invalidResetLink = "This password reset link is invalid";
 export const resetLinkExpiredOrUsed = "This reset link has expired or has already been used";
 
+export const countryNotFound = "Country not found";
+export const stateNotFound = "State not found";
+
 export const userRegisteredSuccessfully = "User registered successfully";
 export const userLoggedInSuccessfully = "User logged in successfully";
 export const userLoggedOutSuccessfully = "User logged out successfully";
