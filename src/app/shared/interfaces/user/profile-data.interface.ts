@@ -1,4 +1,4 @@
-export interface GetProfileInfoResponse {
+export interface GetProfileDataResponse {
   user: UserDto;
   userSettings: UserSettingsDto;
 }

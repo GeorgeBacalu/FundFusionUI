@@ -16,13 +16,6 @@ export interface City {
   name: string;
 }
 
-export interface CountryPhoneInfoResponse {
-  label: string;
-  code: string;
-  prefix: string;
-  length: number;
-}
-
 export interface Currency {
   id: string;
   code: string;
@@ -33,4 +26,11 @@ export interface Locale {
   id: string;
   code: string;
   name: string;
+}
+
+export interface CountryPhoneDataResponse {
+  label: string;
+  code: string;
+  prefix: string;
+  length: number;
 }

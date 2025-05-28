@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../env/env.dev';
-import { Country, State, City, Currency, Locale, CountryPhoneInfoResponse } from '../../shared/interfaces/location/location.interface';
+import { Country, State, City, Currency, Locale, CountryPhoneDataResponse } from '../../shared/interfaces/location/location.interface';
 import { apiLocation } from '../../shared/constants/constants';
 
 @Injectable({ providedIn: 'root' })
@@ -21,5 +21,5 @@ export class LocationService {
 
   getLocales = (): Observable<Locale[]> => this.http.get<Locale[]>(`${this.baseUrl}/${apiLocation}/locales`);
 
-  getCountryPhonesInfo = (): Observable<CountryPhoneInfoResponse[]> => this.http.get<CountryPhoneInfoResponse[]>(`${this.baseUrl}/${apiLocation}/countries/phones-info`);
+  getCountryPhonesData = (): Observable<CountryPhoneDataResponse[]> => this.http.get<CountryPhoneDataResponse[]>(`${this.baseUrl}/${apiLocation}/countries/phones-data`);
 }

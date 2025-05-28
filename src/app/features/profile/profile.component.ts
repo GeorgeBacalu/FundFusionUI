@@ -12,7 +12,7 @@ import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { UserService } from '../../core/services/user.service';
 import { AuthService } from '../../core/services/auth.service';
 import { LocationService } from '../../core/services/location.service';
-import { GetProfileInfoResponse, UserDto, UserSettingsDto, Theme } from '../../shared/interfaces/user/profile-info.interface';
+import { GetProfileDataResponse, UserDto, UserSettingsDto, Theme } from '../../shared/interfaces/user/profile-data.interface';
 import { Country, State, City, Currency, Locale } from '../../shared/interfaces/location/location.interface';
 import { accountDeactivationFailed, profileLoadFailed } from '../../shared/constants/constants';
 
@@ -27,7 +27,7 @@ export class ProfileComponent implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   profileForm!: FormGroup;
-  profileInfo: GetProfileInfoResponse = { user: {} as UserDto, userSettings: {} as UserSettingsDto };
+  profileData: GetProfileDataResponse = { user: {} as UserDto, userSettings: {} as UserSettingsDto };
   countries: Country[] = [];
   states: State[] = [];
   cities: City[] = [];
@@ -52,16 +52,16 @@ export class ProfileComponent implements OnInit {
   get showLastLogin() { return this.profileForm.controls['showLastLogin']; }
   
   get menuItems(): MenuItem[] {
-    const hasAvatar = !!this.profileInfo?.userSettings?.avatarUrl;
+    const hasAvatar = !!this.profileData?.userSettings?.avatarUrl;
     const items: MenuItem[] = [{ label: hasAvatar ? 'Change Image' : 'Upload', icon: hasAvatar ? 'pi pi-pencil' : 'pi pi-upload', command: () => this.fileInput.nativeElement.click() }];
     if (hasAvatar) items.push({ label: 'Remove Image', icon: 'pi pi-trash', command: () => {} });
     return items;
   }
 
   ngOnInit(): void {
-    this.userService.getProfileInfo().subscribe({
+    this.userService.getProfileData().subscribe({
       next: ({ user, userSettings }) => {
-        this.profileInfo = { user, userSettings };
+        this.profileData = { user, userSettings };
 
         this.locationService.getCountries().subscribe((countries) => {
           this.countries = countries;

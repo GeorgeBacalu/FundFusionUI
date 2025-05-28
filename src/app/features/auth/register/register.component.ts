@@ -15,7 +15,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { LocationService } from '../../../core/services/location.service';
 import { passwordMatchValidator } from '../../../shared/validators/password-match.validator';
 import { phoneValidator } from '../../../shared/validators/phone.validator';
-import { Country, State, City, CountryPhoneInfoResponse } from '../../../shared/interfaces/location/location.interface';
+import { Country, State, City, CountryPhoneDataResponse } from '../../../shared/interfaces/location/location.interface';
 import { passwordRegex, registrationFailed } from '../../../shared/constants/constants';
 import { AsYouType, getExampleNumber } from 'libphonenumber-js';
 import examples from 'libphonenumber-js/examples.mobile.json';
@@ -32,7 +32,7 @@ export class RegisterComponent implements OnInit {
   countries: Country[] = [];
   states: State[] = [];
   cities: City[] = [];
-  countryPhonesInfo: CountryPhoneInfoResponse[] = [];
+  countryPhonesData: CountryPhoneDataResponse[] = [];
   mask: string = '';
 
   constructor(private formBuilder: FormBuilder, private authService: AuthService, private locationService: LocationService, private messageService: MessageService, private router: Router) {
@@ -42,7 +42,7 @@ export class RegisterComponent implements OnInit {
       password: ['', [Validators.required, Validators.pattern(passwordRegex)]],
       confirmedPassword: ['', Validators.required],
       phone: ['', [Validators.required]],
-      countryPhoneInfo: [null, Validators.required],
+      countryPhoneData: [null, Validators.required],
       country: [null, Validators.required],
       state: [null, Validators.required],
       city: [null, Validators.required],
@@ -54,11 +54,11 @@ export class RegisterComponent implements OnInit {
   get password() { return this.registerForm.controls['password']; }
   get confirmedPassword() { return this.registerForm.controls['confirmedPassword']; }
   get phone() { return this.registerForm.controls['phone']; }
-  get countryPhoneInfo() { return this.registerForm.controls['countryPhoneInfo']; }
+  get countryPhoneData() { return this.registerForm.controls['countryPhoneData']; }
 
   ngOnInit(): void {
     this.locationService.getCountries().subscribe(countries => this.countries = countries);
-    this.locationService.getCountryPhonesInfo().subscribe(countryPhonesInfo => this.countryPhonesInfo = countryPhonesInfo);
+    this.locationService.getCountryPhonesData().subscribe(countryPhonesData => this.countryPhonesData = countryPhonesData);
   }
 
   loadStates(): void {
@@ -81,7 +81,7 @@ export class RegisterComponent implements OnInit {
 
   onCountryChange(): void {
     this.phone.reset();
-    const { prefix, code, length } = this.countryPhoneInfo.value || {};
+    const { prefix, code, length } = this.countryPhoneData.value || {};
     if (!prefix || !code) return void (this.mask = '');
 
     const example = getExampleNumber(code, examples);
