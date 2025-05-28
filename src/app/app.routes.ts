@@ -5,6 +5,7 @@ import { ChangePasswordComponent } from './features/auth/change-password/change-
 import { ForgotPasswordComponent } from './features/auth/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './features/auth/reset-password/reset-password.component';
 import { OauthCallbackComponent } from './shared/components/oauth-callback/oauth-callback.component';
+import { ProfileComponent } from './features/profile/profile.component';
 import { HomeComponent } from './features/home/home.component';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
@@ -16,5 +17,6 @@ export const routes: Routes = [
     { path: 'forgot-password', component: ForgotPasswordComponent, canActivate: [guestGuard] },
     { path: 'reset-password', component: ResetPasswordComponent, canActivate: [guestGuard] },
     { path: 'oauth/callback', component: OauthCallbackComponent, canActivate: [guestGuard] },
+    { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
     { path: '', component: HomeComponent, canActivate: [authGuard] }
 ];
