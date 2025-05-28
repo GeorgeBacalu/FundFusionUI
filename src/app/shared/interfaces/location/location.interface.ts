@@ -22,3 +22,15 @@ export interface CountryPhoneInfoResponse {
   prefix: string;
   length: number;
 }
+
+export interface Currency {
+  id: string;
+  code: string;
+  name: string;
+}
+
+export interface Locale {
+  id: string;
+  code: string;
+  name: string;
+}

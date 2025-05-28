@@ -1,0 +1,75 @@
+<app-navbar></app-navbar>
+<div class="flex justify-content-center align-items-top">
+  <form [formGroup]="profileForm" class="w-full">
+    <p-card header="My Profile" class="w-full">
+      <div class="flex align-items-center gap-3 mb-4">
+        <p-avatar *ngIf="profileInfo.userSettings.avatarUrl; else defaultIcon" [image]="profileInfo.userSettings.avatarUrl" shape="circle" size="xlarge" styleClass="cursor-pointer" (click)="menu.toggle($event)"></p-avatar>
+        <ng-template #defaultIcon><p-avatar icon="pi pi-user" shape="circle" size="xlarge" styleClass="cursor-pointer" (click)="menu.toggle($event)"></p-avatar></ng-template>
+        <p-menu #menu [popup]="true" [model]="menuItems"></p-menu>
+        <input #fileInput type="file" accept="image/*" hidden (change)="onAvatarChange($event)" />
+      </div>
+      <p-divider align="left"><b>Personal Info</b></p-divider>
+      <div class="p-fluid formgrid grid">
+        <div class="field col-12 md:col-4">
+          <label for="name" class="mx-2">Name:</label>
+          <span>{{ name.value }}</span>
+        </div>
+        <div class="field col-12 md:col-4">
+          <label for="email" class="mx-2">Email:</label>
+          <span>{{ email.value }}</span>
+        </div>
+        <div class="field col-12 md:col-4">
+          <label for="phone" class="mx-2">Phone:</label>
+          <span>{{ phone.value }}</span>
+        </div>
+      </div>
+      <p-divider align="left"><b>Location</b></p-divider>
+      <div class="p-fluid formgrid grid">
+        <div class="field col-12 md:col-4">
+          <label for="country" class="mx-2">Country:</label>
+          <span>{{ country.value.name }}</span>
+        </div>
+        <div class="field col-12 md:col-4">
+          <label for="state" class="mx-2">State:</label>
+          <span>{{ state.value.name }}</span>
+        </div>
+        <div class="field col-12 md:col-4">
+          <label for="city" class="mx-2">City:</label>
+          <span>{{ city.value.name }}</span>
+        </div>
+      </div>
+      <p-divider align="left"><b>Preferences</b></p-divider>
+      <div class="p-fluid formgrid grid">
+        <div class="field col-12 md:col-4">
+          <label for="currency" class="mx-2">Currency:</label>
+          <span>{{ currency.value.code }}</span>
+        </div>
+        <div class="field col-12 md:col-4">
+          <label for="language" class="mx-2">Language:</label>
+          <span>{{ language.value.name }}</span>
+        </div>
+        <div class="field col-12 md:col-4">
+          <label for="theme" class="mx-2">Theme:</label>
+          <span>{{ theme.value }}</span>
+        </div>
+        <div class="field col-12 md:col-4">
+          <div class="flex align-items-center gap-2">
+            <label for="email-notifications" class="mx-2 mb-0">Email Notifications:</label>
+            <span>{{ emailNotify.value ? 'Enabled' : 'Disabled' }}</span>
+          </div>
+        </div>
+        <div class="field col-12 md:col-4">
+          <div class="flex align-items-center gap-2">
+            <label for="show-last-login" class="mx-2 mb-0">Show Last Login:</label>
+            <span>{{ showLastLogin.value ? 'Enabled' : 'Disabled' }}</span>
+          </div>
+        </div>
+      </div>
+      <p-divider align="left"><b>Account Management</b></p-divider>
+      <div class="flex gap-3 mb-4">
+        <p-button label="Change Password" (onClick)="navigateToChangePassword()"></p-button>
+        <p-button label="Delete Account" severity="danger" (onClick)="confirmDeactivation()"></p-button>
+      </div>
+    </p-card>
+  </form>
+</div>
