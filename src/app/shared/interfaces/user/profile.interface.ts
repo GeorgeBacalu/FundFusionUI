@@ -3,6 +3,20 @@ export interface GetProfileDataResponse {
   userSettings: UserSettingsDto;
 }
 
+export interface UpdateProfileRequest {
+  name?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  country?: string | null;
+  state?: string | null;
+  city?: string | null;
+  currency?: string | null;
+  language?: string | null;
+  theme?: number | null;
+  emailNotify?: boolean | null;
+  showLastLogin?: boolean | null;
+}
+
 export interface UserDto {
   name: string;
   email: string;

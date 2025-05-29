@@ -88,7 +88,7 @@ export class RegisterComponent implements OnInit {
     this.mask = example ? `${prefix}${new AsYouType(code).input(example.number).replace(/\d/g, '9').slice(prefix.length)}` : `'${prefix}' ${'9'.repeat(length - prefix.length)}`;
   }
 
-  register = (): void => {
+  register(): void {
     const { country, state, city, ...rest } = this.registerForm.value;
     this.authService.register({ ...rest, phone: this.phone.value, country: country.name, state: state.name, city: city.name }).subscribe({
       next: ({ message }) => (this.messageService.add({ severity: 'success', summary: 'Success', detail: message }), this.router.navigate(['/login'])),
