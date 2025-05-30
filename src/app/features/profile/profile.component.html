@@ -1,6 +1,6 @@
 <app-navbar></app-navbar>
 <div class="flex justify-content-center align-items-top">
-  <form [formGroup]="profileForm" class="w-full">
+  <form [formGroup]="profileForm" class="w-full" (ngSubmit)="updateProfile()">
     <p-card header="My Profile" class="w-full">
       <div class="flex align-items-center gap-3 mb-4">
         <p-avatar *ngIf="profileData.userSettings.avatarUrl; else defaultIcon" [image]="profileData.userSettings.avatarUrl" shape="circle" size="xlarge" styleClass="cursor-pointer" (click)="menu.toggle($event)"></p-avatar>
@@ -10,65 +10,103 @@
       </div>
       <p-divider align="left"><b>Personal Info</b></p-divider>
       <div class="p-fluid formgrid grid">
-        <div class="field col-12 md:col-4">
-          <label for="name" class="mx-2">Name:</label>
-          <span>{{ name.value }}</span>
+        <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
+          <label for="name" class="mb-0">Name:</label>
+          <div *ngIf="editState.name; else nameText">
+            <input type="text" id="name" pInputText formControlName="name" placeholder="Enter your name" autocomplete="name" />
+            <small class="block mt-2 text-red-500" *ngIf="name.invalid && (name.dirty || name.touched)">
+              <div *ngIf="name.errors?.['required']">Name is required</div>
+            </small>
+          </div>
+          <ng-template #nameText>{{ name.value }}</ng-template>
+          <button *ngIf="!editState.name" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('name')"></button>
         </div>
-        <div class="field col-12 md:col-4">
-          <label for="email" class="mx-2">Email:</label>
-          <span>{{ email.value }}</span>
+        <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
+          <label for="email" class="mb-0">Email:</label>
+          <div *ngIf="editState.email; else emailText">
+            <input type="email" id="email" pInputText formControlName="email" class="w-full" placeholder="Enter your email" autocomplete="email" />
+            <small class="block mt-2 text-red-500" *ngIf="email.invalid && (email.dirty || email.touched)">
+              <div *ngIf="email.errors?.['required']">Email is required</div>
+              <div *ngIf="email.errors?.['email']">Invalid email address</div>
+            </small>
+          </div>
+          <ng-template #emailText>{{ email.value }}</ng-template>
+          <button *ngIf="!editState.email" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('email')"></button>
         </div>
-        <div class="field col-12 md:col-4">
-          <label for="phone" class="mx-2">Phone:</label>
-          <span>{{ phone.value }}</span>
+        <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
+          <label for="phone" class="mb-0">Phone:</label>
+          <div *ngIf="editState.phone; else phoneText">
+            <div class="flex gap-2">
+              <p-select [options]="countryPhonesData" optionsLabel="label" formControlName="countryPhoneData" placeholder="Country (Prefix)" (onChange)="onCountryChange()"></p-select>
+              <ng-container *ngIf="mask"><p-inputMask [mask]="mask" [autoClear]="false" formControlName="phone" placeholder="(999) 999-9999"></p-inputMask></ng-container>
+            </div>
+            <small class="block mt-2 text-red-500" *ngIf="phone.invalid && (phone.dirty || phone.touched)">
+              <div *ngIf="phone.errors?.['required']">Phone is required</div>
+            </small>
+            <small class="block mt-2 text-red-500" *ngIf="profileForm.errors?.['invalidPhone'] && (phone.dirty || phone.touched)">Invalid phone number</small>
+          </div>
+          <ng-template #phoneText>{{ phone.value }}</ng-template>
+          <button *ngIf="!editState.phone" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEditPone()"></button>
         </div>
       </div>
       <p-divider align="left"><b>Location</b></p-divider>
       <div class="p-fluid formgrid grid">
-        <div class="field col-12 md:col-4">
-          <label for="country" class="mx-2">Country:</label>
-          <span>{{ country.value?.name }}</span>
+        <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
+          <label for="country" class="mb-0">Country:</label>
+          <p-select *ngIf="editState.country; else countryText" inputId="country" [options]="countries" optionLabel="name" formControlName="country" placeholder="Select your country" (onChange)="loadStates()"></p-select>
+          <ng-template #countryText>{{ country.value?.name }}</ng-template>
+          <button *ngIf="!editState.country" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('country')"></button>
         </div>
-        <div class="field col-12 md:col-4">
-          <label for="state" class="mx-2">State:</label>
-          <span>{{ state.value?.name }}</span>
+        <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
+          <label for="state" class="mb-0">State:</label>
+          <p-select *ngIf="editState.state; else stateText" inputId="state" [options]="states" optionLabel="name" formControlName="state" placeholder="Select your state" (onChange)="loadCities()"></p-select>
+          <ng-template #stateText>{{ state.value?.name }}</ng-template>
+          <button *ngIf="!editState.state" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('state')"></button>
         </div>
-        <div class="field col-12 md:col-4">
-          <label for="city" class="mx-2">City:</label>
-          <span>{{ city.value?.name }}</span>
+        <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
+          <label for="city" class="mb-0">City:</label>
+          <p-select *ngIf="editState.city; else cityText" inputId="city" [options]="cities" optionLabel="name" formControlName="city" placeholder="Select your city"></p-select>
+          <ng-template #cityText>{{ city.value?.name }}</ng-template>
+          <button *ngIf="!editState.city" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('city')"></button>
         </div>
       </div>
       <p-divider align="left"><b>Preferences</b></p-divider>
       <div class="p-fluid formgrid grid">
-        <div class="field col-12 md:col-4">
-          <label for="currency" class="mx-2">Currency:</label>
-          <span>{{ currency.value?.code }}</span>
+        <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
+          <label for="currency" class="mb-0">Currency:</label>
+          <p-select *ngIf="editState.currency; else currencyText" inputId="currency" [options]="currencies" optionLabel="code" formControlName="currency" placeholder="Select your currency"></p-select>
+          <ng-template #currencyText>{{ currency.value?.code }}</ng-template>
+          <button *ngIf="!editState.currency" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('currency')"></button>
         </div>
-        <div class="field col-12 md:col-4">
-          <label for="language" class="mx-2">Language:</label>
-          <span>{{ language.value?.name }}</span>
+        <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
+          <label for="language" class="mb-0">Language:</label>
+          <p-select *ngIf="editState.language; else languageText" inputId="language" [options]="locales" optionLabel="name" formControlName="language" placeholder="Select your preferred language"></p-select>
+          <ng-template #languageText>{{ language.value?.name }}</ng-template>
+          <button *ngIf="!editState.language" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('language')"></button>
         </div>
-        <div class="field col-12 md:col-4">
-          <label for="theme" class="mx-2">Theme:</label>
-          <span>{{ theme.value }}</span>
+        <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
+          <label for="theme" class="mb-0">Theme:</label>
+          <p-select *ngIf="editState.theme; else themeText" inputId="theme" [options]="themes" formControlName="theme" placeholder="Select your preferred theme"></p-select>
+          <ng-template #themeText>{{ theme.value }}</ng-template>
+          <button *ngIf="!editState.theme" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('theme')"></button>
         </div>
-        <div class="field col-12 md:col-4">
-          <div class="flex align-items-center gap-2">
-            <label for="email-notifications" class="mx-2 mb-0">Email Notifications:</label>
-            <span>{{ emailNotify.value ? 'Enabled' : 'Disabled' }}</span>
-          </div>
+        <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
+          <label for="email-notifications" class="mb-0">Email Notifications:</label>
+          <p-inputSwitch inputId="email-notifications" formControlName="emailNotify" (onChange)="toggleEdit('emailNotify')"></p-inputSwitch>
         </div>
-        <div class="field col-12 md:col-4">
-          <div class="flex align-items-center gap-2">
-            <label for="show-last-login" class="mx-2 mb-0">Show Last Login:</label>
-            <span>{{ showLastLogin.value ? 'Enabled' : 'Disabled' }}</span>
-          </div>
+        <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
+          <label for="show-last-login" class="mb-0">Show Last Login:</label>
+          <p-inputSwitch inputId="show-last-login" formControlName="showLastLogin" (onChange)="toggleEdit('showLastLogin')"></p-inputSwitch>
         </div>
       </div>
       <p-divider align="left"><b>Account Management</b></p-divider>
       <div class="flex gap-3 mb-4">
-        <p-button label="Change Password" (onClick)="navigateToChangePassword()"></p-button>
-        <p-button label="Delete Account" severity="danger" (onClick)="confirmDeactivation()"></p-button>
+        <p-button label="Change Password" icon="pi pi-key" (onClick)="navigateToChangePassword()"></p-button>
+        <p-button label="Delete Account" icon="pi pi-trash" severity="danger" (onClick)="confirmDeactivation()"></p-button>
+      </div>
+      <div class="flex justify-content-end gap-2">
+        <p-button *ngIf="isEditing" label="Cancel" icon="pi pi-times" severity="secondary" (onClick)="confirmCancel()"></p-button>
+        <p-button type="submit" label="Update Details" icon="pi pi-save" [disabled]="!isEditing || !areEditedFieldsValid() || profileForm.errors?.['invalidPhone']"></p-button>
       </div>
     </p-card>
   </form>

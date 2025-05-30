@@ -30,7 +30,7 @@ export class ResetPasswordComponent {
   get newPassword() { return this.resetPasswordForm.controls['newPassword']; }
   get confirmedPassword() { return this.resetPasswordForm.controls['confirmedPassword']; }
 
-  resetPassword = () => {
+  resetPassword(): void {
     const token = this.route.snapshot.queryParamMap.get('token');
     if (!token) return this.messageService.add({ severity: 'error', summary: 'Invalid link', detail: invalidResetLink });
     this.authService.resetPassword({ token, ...this.resetPasswordForm.value }).subscribe({

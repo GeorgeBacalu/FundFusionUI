@@ -3,14 +3,14 @@
     <p-card header="Register" class="w-full sm:w-8 md:w-6 lg:w-4 xl:w-3">
       <div class="field">
         <label for="name">Name</label>
-        <input type="text" id="name" formControlName="name" pInputText class="w-full" placeholder="Enter your name" autocomplete="name" />
+        <input type="text" id="name" pInputText formControlName="name" class="w-full" placeholder="Enter your name" autocomplete="name" />
         <small class="block text-red-500" *ngIf="name.invalid && (name.dirty || name.touched)">
           <div *ngIf="name.errors?.['required']">Name is required</div>
         </small>
       </div>
       <div class="field">
         <label for="email">Email</label>
-        <input type="text" id="email" formControlName="email" pInputText class="w-full" placeholder="Enter your email" autocomplete="email" />
+        <input type="email" id="email" pInputText formControlName="email" class="w-full" placeholder="Enter your email" autocomplete="email" />
         <small class="block text-red-500" *ngIf="email.invalid && (email.dirty || email.touched)">
           <div *ngIf="email.errors?.['required']">Email is required</div>
           <div *ngIf="email.errors?.['email']">Invalid email address</div>
