@@ -15,6 +15,7 @@ export const accountDeactivationFailed = "Account deactivation failed";
 
 export const profileLoadFailed = "Failed to load profile data";
 export const profileUpdateFailed = "Failed to update profile data";
+export const avatarUploadFailed = "Failed to upload avatar";
 
 export const invalidResetLink = "This password reset link is invalid";
 export const resetLinkExpiredOrUsed = "This reset link has expired or has already been used";

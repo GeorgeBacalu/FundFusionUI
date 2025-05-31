@@ -46,7 +46,7 @@
             <small class="block mt-2 text-red-500" *ngIf="profileForm.errors?.['invalidPhone'] && (phone.dirty || phone.touched)">Invalid phone number</small>
           </div>
           <ng-template #phoneText>{{ phone.value }}</ng-template>
-          <button *ngIf="!editState.phone" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEditPone()"></button>
+          <button *ngIf="!editState.phone" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEditPhone()"></button>
         </div>
       </div>
       <p-divider align="left"><b>Location</b></p-divider>

@@ -6,3 +6,7 @@
   background: #fff;
   z-index: 2;
 }
+
+::ng-deep .p-avatar img {
+  object-fit: cover;
+}
