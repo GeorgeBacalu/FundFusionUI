@@ -85,7 +85,7 @@ export class RegisterComponent implements OnInit {
     if (!prefix || !code) return void (this.mask = '');
 
     const example = getExampleNumber(code, examples);
-    this.mask = example ? `${prefix}${new AsYouType(code).input(example.number).replace(/\d/g, '9').slice(prefix.length)}` : `'${prefix}' ${'9'.repeat(length - prefix.length)}`;
+    this.mask = example ? `${prefix}${new AsYouType(code).input(example.number).replace(/\d/g, '9').slice(prefix.length)}` : `${prefix}${'9'.repeat(length - prefix.length)}`;
   }
 
   register(): void {

@@ -20,7 +20,7 @@ import { LocationService } from '../../core/services/location.service';
 import { phoneValidator } from '../../shared/validators/phone.validator';
 import { GetProfileDataResponse, UserDto, UserSettingsDto, Theme } from '../../shared/interfaces/user/profile.interface';
 import { Country, State, City, Currency, Locale, CountryPhoneDataResponse } from '../../shared/interfaces/location/location.interface';
-import { accountDeactivationFailed, countryNotFound, stateNotFound, profileLoadFailed, profileUpdateFailed, avatarUploadFailed, genericError } from '../../shared/constants/constants';
+import { accountDeactivationFailed, countryNotFound, stateNotFound, profileLoadFailed, profileUpdateFailed, avatarUploadFailed, genericError, fileTooLarge, serverUnreachable } from '../../shared/constants/constants';
 import { AsYouType, getExampleNumber } from 'libphonenumber-js';
 import examples from 'libphonenumber-js/examples.mobile.json';
 
@@ -121,10 +121,13 @@ export class ProfileComponent implements OnInit {
     this.userService.uploadAvatar(formData).subscribe({
       next: ({ message }) => {
         this.profileData.userSettings.avatarUrl = `${this.profileData.userSettings.avatarUrl?.split('?')[0]}?t=${Date.now()}`;
-        this.resetEditState(); this.resetProfileData();
+        this.userService.getProfileData().subscribe();
+        this.resetEditState(), this.resetProfileData();
         this.messageService.add({ severity: 'success', summary: 'Success', detail: message });
       },
-      error: ({ error }) => this.messageService.add({ severity: 'error', summary: error?.title || 'Error', detail: error?.detail || avatarUploadFailed })
+      error: ({ error, status }) => this.messageService.add({ severity: 'error',
+        summary: status === 400 && error?.errors?.['']?.[0]?.includes('Request body too large') ? 'File too large' : status === 0 || !error ? 'Service unavailable' : error?.title || 'Error', 
+        detail: status === 400 && error?.errors?.['']?.[0]?.includes('Request body too large') ? fileTooLarge : status === 0 || !error ? serverUnreachable : error?.detail || avatarUploadFailed })
     });
   }
 

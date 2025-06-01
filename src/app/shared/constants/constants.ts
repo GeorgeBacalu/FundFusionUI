@@ -17,6 +17,9 @@ export const profileLoadFailed = "Failed to load profile data";
 export const profileUpdateFailed = "Failed to update profile data";
 export const avatarUploadFailed = "Failed to upload avatar";
 
+export const fileTooLarge = "The selected file exceeds the 20MB upload limit";
+export const serverUnreachable = "Unable to reach the server. Please try again later";
+
 export const invalidResetLink = "This password reset link is invalid";
 export const resetLinkExpiredOrUsed = "This reset link has expired or has already been used";
 

@@ -5,7 +5,8 @@
       <span class="text-2xl text-green-700 font-bold">Fund Fusion</span>
     </div>
     <div>
-      <p-avatar [image]="avatarUrl" icon="pi pi-user" shape="circle" size="xlarge" styleClass="cursor-pointer" (click)="menu.toggle($event)"></p-avatar>
+      <p-avatar *ngIf="(avatarUrl$ | async) as avatarUrl; else defaultIcon" [image]="avatarUrl" shape="circle" size="xlarge" styleClass="cursor-pointer" (click)="menu.toggle($event)"></p-avatar>
+      <ng-template #defaultIcon><p-avatar icon="pi pi-user" shape="circle" size="xlarge" styleClass="cursor-pointer" (click)="menu.toggle($event)"></p-avatar></ng-template>
       <p-menu #menu [popup]="true" [model]="menuItems"></p-menu>
     </div>
   </div>

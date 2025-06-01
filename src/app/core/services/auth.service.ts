@@ -30,5 +30,5 @@ export class AuthService {
 
   deactivateAccount = (): Observable<{ message: string }> => this.http.delete<{ message: string }>(`${this.baseUrl}/${apiAuth}`);
 
-  logout = (): void => (localStorage.removeItem('accessToken'), localStorage.removeItem('refreshToken'));
+  logout = (): void => localStorage.clear();
 }
