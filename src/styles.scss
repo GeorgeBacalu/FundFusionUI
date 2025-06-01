@@ -5,3 +5,7 @@ html, body {
     height: 100%;
     margin: 0;
 }
+
+.p-avatar img {
+  object-fit: cover;
+}
