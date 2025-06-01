@@ -12,13 +12,13 @@ export const loginFailed = "Login failed";
 export const passwordChangeFailed = "Password change failed";
 export const passwordResetFailed = "Password reset failed";
 export const accountDeactivationFailed = "Account deactivation failed";
-
 export const profileLoadFailed = "Failed to load profile data";
 export const profileUpdateFailed = "Failed to update profile data";
 export const avatarUploadFailed = "Failed to upload avatar";
+export const avatarRemoveFailed = "Failed to remove avatar";
 
+export const payloadTooLarge = "Request body too large";
 export const fileTooLarge = "The selected file exceeds the 20MB upload limit";
-export const serverUnreachable = "Unable to reach the server. Please try again later";
 
 export const invalidResetLink = "This password reset link is invalid";
 export const resetLinkExpiredOrUsed = "This reset link has expired or has already been used";

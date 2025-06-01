@@ -5,7 +5,10 @@
       <span class="text-2xl text-green-700 font-bold">Fund Fusion</span>
     </div>
     <div>
-      <p-avatar *ngIf="(avatarUrl$ | async) as avatarUrl; else defaultIcon" [image]="avatarUrl" shape="circle" size="xlarge" styleClass="cursor-pointer" (click)="menu.toggle($event)"></p-avatar>
+      <p-avatar *ngIf="avatarUrl$ | async as avatarUrl; else defaultIcon" shape="circle" size="xlarge" styleClass="cursor-pointer" (click)="menu.toggle($event)">
+        <img [src]="avatarUrl" (loadstart)="onLoadStart()" (load)="onLoadOrError()" (error)="onLoadOrError()" [hidden]="avatarLoading$ | async" />
+        <span *ngIf="avatarLoading$ | async" class="pi pi-spinner pi-spin text-3xl text-green-500"></span>
+      </p-avatar>
       <ng-template #defaultIcon><p-avatar icon="pi pi-user" shape="circle" size="xlarge" styleClass="cursor-pointer" (click)="menu.toggle($event)"></p-avatar></ng-template>
       <p-menu #menu [popup]="true" [model]="menuItems"></p-menu>
     </div>

@@ -1,8 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { NgIf } from '@angular/common';
+import { AsyncPipe, NgIf } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { map, switchMap } from 'rxjs';
+import { map, Observable, switchMap } from 'rxjs';
 import { CardModule } from 'primeng/card';
 import { AvatarModule } from 'primeng/avatar';
 import { MenuModule } from 'primeng/menu';
@@ -20,19 +20,21 @@ import { LocationService } from '../../core/services/location.service';
 import { phoneValidator } from '../../shared/validators/phone.validator';
 import { GetProfileDataResponse, UserDto, UserSettingsDto, Theme } from '../../shared/interfaces/user/profile.interface';
 import { Country, State, City, Currency, Locale, CountryPhoneDataResponse } from '../../shared/interfaces/location/location.interface';
-import { accountDeactivationFailed, countryNotFound, stateNotFound, profileLoadFailed, profileUpdateFailed, avatarUploadFailed, genericError, fileTooLarge, serverUnreachable } from '../../shared/constants/constants';
+import { accountDeactivationFailed, countryNotFound, stateNotFound, profileLoadFailed, profileUpdateFailed, avatarUploadFailed, avatarRemoveFailed, payloadTooLarge, fileTooLarge, genericError } from '../../shared/constants/constants';
 import { AsYouType, getExampleNumber } from 'libphonenumber-js';
 import examples from 'libphonenumber-js/examples.mobile.json';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [NgIf, RouterModule, ReactiveFormsModule, CardModule, AvatarModule, MenuModule, ButtonModule, DividerModule, InputTextModule, InputMaskModule, InputSwitchModule, SelectModule, NavbarComponent],
+  imports: [NgIf, RouterModule, ReactiveFormsModule, CardModule, AvatarModule, MenuModule, ButtonModule, DividerModule, InputTextModule, InputMaskModule, InputSwitchModule, SelectModule, NavbarComponent, AsyncPipe],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  avatarUrl$!: Observable<string | null>;
+  avatarLoading$!: Observable<boolean>;
   editState = { name: false, email: false, phone: false, country: false, state: false, city: false, currency: false, language: false, theme: false, emailNotify: false, showLastLogin: false };
 
   profileForm!: FormGroup;
@@ -80,10 +82,11 @@ export class ProfileComponent implements OnInit {
   get isEditing(): boolean { return Object.values(this.editState).some(editing => editing); }
   get menuItems(): MenuItem[] {
     const hasAvatar = !!this.profileData?.userSettings?.avatarUrl;
-    return [{ label: hasAvatar ? 'Change Image' : 'Upload', icon: hasAvatar ? 'pi pi-pencil' : 'pi pi-upload', command: () => this.fileInput.nativeElement.click() }, ...(hasAvatar ? [{ label: 'Remove Image', icon: 'pi pi-trash', command: () => {}}] : [])];
+    return [{ label: hasAvatar ? 'Change Image' : 'Upload', icon: hasAvatar ? 'pi pi-pencil' : 'pi pi-upload', command: () => this.fileInput.nativeElement.click() }, hasAvatar && { label: 'Remove Image', icon: 'pi pi-trash', command: () => this.deleteAvatar() }].filter(Boolean) as MenuItem[];
   }
 
   ngOnInit(): void {
+    this.avatarUrl$ = this.userService.avatarUrl$, this.avatarLoading$ = this.userService.avatarLoading$;
     this.locationService.getCountryPhonesData().subscribe(data => this.countryPhonesData = data);
     this.locationService.getCurrencies().subscribe(data => this.currencies = data);
     this.locationService.getLocales().subscribe(data => this.locales = data);
@@ -111,25 +114,29 @@ export class ProfileComponent implements OnInit {
     })))).subscribe({ error: () => this.messageService.add({ severity: 'error', summary: 'Error', detail: profileLoadFailed }) });
   }
 
-  onAvatarChange = (event: Event) => {
+  uploadAvatar(event: Event): void {
     const file = (event.target as HTMLInputElement)?.files?.[0];
     if (!file) return;
 
     const formData = new FormData();
     formData.append('file', file);
 
+    this.userService.setAvatarLoading(true);
     this.userService.uploadAvatar(formData).subscribe({
-      next: ({ message }) => {
-        this.profileData.userSettings.avatarUrl = `${this.profileData.userSettings.avatarUrl?.split('?')[0]}?t=${Date.now()}`;
-        this.userService.getProfileData().subscribe();
-        this.resetEditState(), this.resetProfileData();
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: message });
-      },
-      error: ({ error, status }) => this.messageService.add({ severity: 'error',
-        summary: status === 400 && error?.errors?.['']?.[0]?.includes('Request body too large') ? 'File too large' : status === 0 || !error ? 'Service unavailable' : error?.title || 'Error', 
-        detail: status === 400 && error?.errors?.['']?.[0]?.includes('Request body too large') ? fileTooLarge : status === 0 || !error ? serverUnreachable : error?.detail || avatarUploadFailed })
+      next: ({ message }) => this.userService.getProfileData().subscribe(data => (this.profileData = data, this.resetEditState(), this.resetProfileData(), this.messageService.add({ severity: 'success', summary: 'Success', detail: message }))),
+      error: ({ error }) => (this.userService.setAvatarLoading(false), this.messageService.add({ severity: 'error', summary: this.isPayloadTooLarge(error) ? 'File too large' : error?.title || 'Error', detail: this.isPayloadTooLarge(error) ? fileTooLarge : error?.detail || avatarUploadFailed }))
     });
   }
+
+  deleteAvatar = () => this.confirmationService.confirm({ header: 'Confirm Deletion', message: 'Are you sure you want to delete your avatar?', icon: 'pi pi-info-circle',
+    acceptLabel: 'Yes', rejectLabel: 'Cancel', acceptIcon: "pi pi-check", rejectIcon: "pi pi-times", acceptButtonStyleClass: 'p-button-danger', rejectButtonStyleClass: 'p-button-secondary', accept: () => this.userService.deleteAvatar().subscribe({
+      next: ({ message }) => (this.profileData.userSettings.avatarUrl = null, this.userService.resetAvatarUrl(), this.resetEditState(), this.resetProfileData(), this.messageService.add({ severity: 'success', summary: 'Success', detail: message })),
+      error: ({ error }) => this.messageService.add({ severity: 'error', summary: error?.title || 'Error', detail: error?.detail || avatarRemoveFailed })
+    }) });
+
+  isPayloadTooLarge = (error: any): boolean => error?.errors?.['']?.[0]?.includes(payloadTooLarge);
+  onLoadStart = () => this.userService.setAvatarLoading(true);
+  onLoadOrError = () => this.userService.setAvatarLoading(false);
 
   toggleEdit(field: keyof typeof this.editState): void {
     this.editState[field] = true;
@@ -190,8 +197,6 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  areEditedFieldsValid = (): boolean => Object.entries(this.editState).every(([field, isEditing]) => !isEditing || this.profileForm.get(field)?.valid);
-
   private resetEditState = () => Object.keys(this.editState).forEach(key => this.editState[key as keyof typeof this.editState] = false);
 
   private resetProfileData(): void {
@@ -214,4 +219,6 @@ export class ProfileComponent implements OnInit {
       }));
     })).subscribe({ error: () => this.messageService.add({ severity: 'error', summary: 'Error', detail: genericError }) });
   }
+
+  areEditedFieldsValid = (): boolean => Object.entries(this.editState).every(([field, isEditing]) => !isEditing || this.profileForm.get(field)?.valid);
 }
