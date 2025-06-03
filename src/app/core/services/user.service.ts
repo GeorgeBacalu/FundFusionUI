@@ -9,17 +9,22 @@ import { GetProfileDataResponse, UpdateProfileRequest } from '../../shared/inter
 export class UserService {
   private readonly baseUrl = environment.baseUrl;
 
-  private avatarUrlSubject = new BehaviorSubject<string | null>(localStorage.getItem('avatarUrl'));
+  private avatarUrlSubject = new BehaviorSubject<string | null>(null);
   avatarUrl$: Observable<string | null> = this.avatarUrlSubject.asObservable();
+  private avatarLoadingSubject = new BehaviorSubject<boolean>(false);
+  avatarLoading$: Observable<boolean> = this.avatarLoadingSubject.asObservable();
+
+  setAvatarLoading = (isLoading: boolean): void => this.avatarLoadingSubject.next(isLoading);
+  resetAvatarUrl = (): void => this.avatarUrlSubject.next(null);
 
   constructor(private http: HttpClient) {}
 
-  getProfileData = (): Observable<GetProfileDataResponse> => this.http.get<GetProfileDataResponse>(`${this.baseUrl}/${apiUser}/profile`).pipe(tap(({ userSettings }) => {
-    const baseAvatarUrl = userSettings.avatarUrl?.split('?')[0], timestampedUrl = baseAvatarUrl ? `${baseAvatarUrl}?t=${Date.now()}` : '';
-    localStorage.setItem('avatarUrl', timestampedUrl), this.avatarUrlSubject.next(baseAvatarUrl ? timestampedUrl : null);
-  }));
+  getProfileData = (): Observable<GetProfileDataResponse> => this.http.get<GetProfileDataResponse>(`${this.baseUrl}/${apiUser}/profile`).pipe(tap(({ userSettings }) =>
+    this.avatarUrlSubject.next(userSettings.avatarUrl?.split('?')[0] ? `${userSettings.avatarUrl?.split('?')[0]}?t=${Date.now()}` : null)));
 
   updateProfile = (payload: UpdateProfileRequest): Observable<{ message: string }> => this.http.patch<{ message: string }>(`${this.baseUrl}/${apiUser}/profile`, payload);
 
-  uploadAvatar = (payload: FormData): Observable<{ message: string }> => this.http.post<{ message: string }>(`${this.baseUrl}/${apiUser}/profile/image/upload`, payload);
+  uploadAvatar = (payload: FormData): Observable<{ message: string }> => this.http.post<{ message: string }>(`${this.baseUrl}/${apiUser}/profile/image`, payload);
+
+  deleteAvatar = (): Observable<{ message: string }> => this.http.delete<{ message: string }>(`${this.baseUrl}/${apiUser}/profile/image`);
 }

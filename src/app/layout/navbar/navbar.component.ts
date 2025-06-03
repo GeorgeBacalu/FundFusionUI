@@ -12,20 +12,22 @@ import { userLoggedOutSuccessfully } from '../../shared/constants/constants';
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [NgIf, RouterModule, AvatarModule, MenuModule, AsyncPipe],
+  imports: [NgIf, AsyncPipe, RouterModule, AvatarModule, MenuModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit {
   avatarUrl$!: Observable<string | null>;
-  menuItems: MenuItem[] = [{ label: 'View Profile', icon: 'pi pi-user', command: () => this.router.navigate(['/profile']) },
-                           { label: 'Logout', icon: 'pi pi-sign-out', command: () => this.logout() }];
+  avatarLoading$!: Observable<boolean>;
+  menuItems: MenuItem[] = [{ label: 'View Profile', icon: 'pi pi-user', command: () => this.router.navigate(['/profile']) }, { label: 'Logout', icon: 'pi pi-sign-out', command: () => this.logout() }];
 
   constructor(private authService: AuthService, private userService: UserService, private messageService: MessageService, private router: Router) {}
 
-  ngOnInit(): void { this.avatarUrl$ = this.userService.avatarUrl$; }
+  ngOnInit(): void { this.avatarUrl$ = this.userService.avatarUrl$; this.avatarLoading$ = this.userService.avatarLoading$; }
 
   navigateToHome = () => this.router.navigate(['/']);
+  onLoadStart = () => this.userService.setAvatarLoading(true);
+  onLoadOrError = () => this.userService.setAvatarLoading(false);
 
   logout = () => (this.authService.logout(), this.messageService.add({ severity: 'success', summary: 'Success', detail: userLoggedOutSuccessfully }), this.router.navigate(['/login']));                        
 }
