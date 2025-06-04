@@ -18,7 +18,7 @@ import { UserService } from '../../core/services/user.service';
 import { AuthService } from '../../core/services/auth.service';
 import { LocationService } from '../../core/services/location.service';
 import { phoneValidator } from '../../shared/validators/phone.validator';
-import { GetProfileDataResponse, UserDto, UserSettingsDto, Theme } from '../../shared/interfaces/user/profile.interface';
+import { GetProfileDataResponse, Theme } from '../../shared/interfaces/user/profile.interface';
 import { Country, State, City, Currency, Locale, CountryPhoneDataResponse } from '../../shared/interfaces/location/location.interface';
 import { accountDeactivationFailed, countryNotFound, stateNotFound, profileLoadFailed, profileUpdateFailed, avatarUploadFailed, avatarRemoveFailed, payloadTooLarge, fileTooLarge, genericError } from '../../shared/constants/constants';
 import { AsYouType, getExampleNumber } from 'libphonenumber-js';
@@ -35,11 +35,11 @@ export class ProfileComponent implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   avatarUrl$!: Observable<string | null>;
   avatarLoading$!: Observable<boolean>;
-  editState = { name: false, email: false, phone: false, country: false, state: false, city: false, currency: false, language: false, theme: false, emailNotify: false, showLastLogin: false };
+  editState = { name: false, email: false, phone: false, country: false, state: false, city: false, currency: false, locale: false, theme: false, emailNotify: false, showLastLogin: false };
 
   profileForm!: FormGroup;
-  profileData: GetProfileDataResponse = { user: {} as UserDto, userSettings: {} as UserSettingsDto };
-  countryPhonesData: CountryPhoneDataResponse[] = [];
+  profileData!: GetProfileDataResponse; 
+  countriesPhoneData: CountryPhoneDataResponse[] = [];
   countries: Country[] = [];
   states: State[] = [];
   cities: City[] = [];
@@ -60,7 +60,7 @@ export class ProfileComponent implements OnInit {
       state: [null, Validators.required],
       city: [null, Validators.required],
       currency: [null, Validators.required],
-      language: [null, Validators.required],
+      locale: [null, Validators.required],
       theme: [null, Validators.required],
       emailNotify: [false],
       showLastLogin: [false]
@@ -75,7 +75,7 @@ export class ProfileComponent implements OnInit {
   get state() { return this.profileForm.controls['state']; }
   get city() { return this.profileForm.controls['city']; }
   get currency() { return this.profileForm.controls['currency']; }
-  get language() { return this.profileForm.controls['language']; }
+  get locale() { return this.profileForm.controls['locale']; }
   get theme() { return this.profileForm.controls['theme']; }
   get emailNotify() { return this.profileForm.controls['emailNotify']; }
   get showLastLogin() { return this.profileForm.controls['showLastLogin']; }
@@ -87,31 +87,20 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.avatarUrl$ = this.userService.avatarUrl$, this.avatarLoading$ = this.userService.avatarLoading$;
-    this.locationService.getCountryPhonesData().subscribe(data => this.countryPhonesData = data);
-    this.locationService.getCurrencies().subscribe(data => this.currencies = data);
-    this.locationService.getLocales().subscribe(data => this.locales = data);
-    this.userService.getProfileData().pipe(switchMap(({ user, userSettings }) => {
-      this.profileData = { user, userSettings };
-      return this.locationService.getCountries().pipe(map(countries => {
-        this.countries = countries;
-        const selectedCountry = countries.find(country => country.name === user.country);
-        if (!selectedCountry) throw new Error(countryNotFound);
-        return { user, userSettings, selectedCountry };
-      }));
-    }), switchMap(({ user, userSettings, selectedCountry }) => this.locationService.getStatesByCountryId(selectedCountry.id).pipe(map(states => {
-        this.states = states;
-        const selectedState = states.find(state => state.name === user.state);
-        if (!selectedState) throw new Error(stateNotFound);
-        return { user, userSettings, selectedCountry, selectedState };
-    }))), switchMap(({ user, userSettings, selectedCountry, selectedState }) => this.locationService.getCitiesByStateId(selectedState.id).pipe(map(cities => {
-        this.cities = cities;
-        const selectedCity = cities.find(city => city.name === user.city);
-        const selectedCurrency = this.currencies.find(currency => currency.code === userSettings.currency);
-        const selectedLocale = this.locales.find(locale => locale.name === userSettings.language);
+    this.userService.getProfileData().subscribe({ next: response => {
+        this.profileData = response;
+        const { user, userSettings, countries, currencies, locales, states, cities, countriesPhoneData } = response;
+        Object.assign(this, { countriesPhoneData, countries, currencies, locales, states, cities });
 
-        this.profileForm.patchValue({ name: user.name, email: user.email, phone: user.phone, country: selectedCountry, state: selectedState, city: selectedCity, 
-          currency: selectedCurrency, language: selectedLocale, theme: this.themesMap[+userSettings.theme], emailNotify: userSettings.emailNotify, showLastLogin: userSettings.showLastLogin });
-    })))).subscribe({ error: () => this.messageService.add({ severity: 'error', summary: 'Error', detail: profileLoadFailed }) });
+        const country = this.countries.find(country => country.name === response.user.country);
+        const state = this.states.find(state => state.name === response.user.state);
+        const city = this.cities.find(city => city.name === response.user.city);
+        const currency = this.currencies.find(currency => currency.code === response.userSettings.currency);
+        const locale = this.locales.find(locale => locale.name === response.userSettings.locale);
+
+        this.profileForm.patchValue({ name: user.name, email: user.email, phone: user.phone, country, state, city, currency, locale, theme: this.themesMap[+response.userSettings.theme], emailNotify: userSettings.emailNotify, showLastLogin: userSettings.showLastLogin });
+      }, error: () => this.messageService.add({ severity: 'error', summary: 'Error', detail: profileLoadFailed })
+    });
   }
 
   uploadAvatar(event: Event): void {
@@ -123,7 +112,7 @@ export class ProfileComponent implements OnInit {
 
     this.userService.setAvatarLoading(true);
     this.userService.uploadAvatar(formData).subscribe({
-      next: ({ message }) => this.userService.getProfileData().subscribe(data => (this.profileData = data, this.resetEditState(), this.resetProfileData(), this.messageService.add({ severity: 'success', summary: 'Success', detail: message }))),
+      next: ({ message }) => this.userService.getAvatarUrl().subscribe(avatarUrl => (this.profileData.userSettings.avatarUrl = avatarUrl, this.resetEditState(), this.resetProfileData(), this.messageService.add({ severity: 'success', summary: 'Success', detail: message }))),
       error: ({ error }) => (this.userService.setAvatarLoading(false), this.messageService.add({ severity: 'error', summary: this.isPayloadTooLarge(error) ? 'File too large' : error?.title || 'Error', detail: this.isPayloadTooLarge(error) ? fileTooLarge : error?.detail || avatarUploadFailed }))
     });
   }
@@ -147,7 +136,7 @@ export class ProfileComponent implements OnInit {
   toggleEditPhone(): void {
     this.toggleEdit('phone');
     if (!this.editState.phone || !this.phone.value) return;
-    const country = this.countryPhonesData.find(country => this.phone.value.startsWith(country.prefix));
+    const country = this.countriesPhoneData.find(country => this.phone.value.startsWith(country.prefix));
     if (!country) return;
     this.countryPhoneData.setValue(country);
     this.updateMask();
@@ -156,10 +145,10 @@ export class ProfileComponent implements OnInit {
   onCountryChange = () => (this.phone.reset(), this.updateMask());
 
   private updateMask(): void {
-    const { prefix, code, length } = this.countryPhoneData.value || {};
+    const { prefix, code, phoneLength } = this.countryPhoneData.value || {};
     if (!prefix || !code) return void (this.mask = '');
     const example = getExampleNumber(code, examples);
-    this.mask = example ? `${prefix}${new AsYouType(code).input(example.number).replace(/\d/g, '9').slice(prefix.length)}` : `${prefix}${'9'.repeat(length - prefix.length)}`;
+    this.mask = example ? `${prefix}${new AsYouType(code).input(example.number).replace(/\d/g, '9').slice(prefix.length)}` : `${prefix}${'9'.repeat(phoneLength - prefix.length)}`;
   }
 
   loadStates(): void {
@@ -190,8 +179,8 @@ export class ProfileComponent implements OnInit {
     acceptIcon: "pi pi-check", rejectIcon: "pi pi-times", acceptButtonStyleClass: 'p-button-danger', rejectButtonStyleClass: 'p-button-secondary', accept: () => (this.resetEditState(), this.resetProfileData()) });
 
   updateProfile(): void {
-    const { name, email, phone, country, state, city, currency, language, emailNotify, showLastLogin } = this.profileForm.value;
-    this.userService.updateProfile({ name, email, phone, country: country?.name, state: state?.name, city: city?.name, currency: currency?.code, language: language?.name, theme: this.themeReverseMap[this.theme.value as Theme], emailNotify, showLastLogin }).subscribe({
+    const { name, email, phone, country, state, city, currency, locale, emailNotify, showLastLogin } = this.profileForm.value;
+    this.userService.updateProfile({ name, email, phone, country: country?.name, state: state?.name, city: city?.name, currency: currency?.code, locale: locale?.name, theme: this.themeReverseMap[this.theme.value as Theme], emailNotify, showLastLogin }).subscribe({
       next: ({ message }) => (this.resetEditState(), this.messageService.add({ severity: 'success', summary: 'Success', detail: message })),
       error: ({ error }) => (this.resetEditState(), this.resetProfileData(), this.messageService.add({ severity: 'error', summary: error?.title || 'Error', detail: error?.detail || profileUpdateFailed }))
     });
@@ -201,21 +190,21 @@ export class ProfileComponent implements OnInit {
 
   private resetProfileData(): void {
     const { user, userSettings } = this.profileData;
-    const selectedCountry = this.countries.find(country => country.name === user.country);
-    const selectedCurrency = this.currencies.find(currency => currency.code === userSettings.currency);
-    const selectedLocale = this.locales.find(locale => locale.name === userSettings.language);
+    const country = this.countries.find(country => country.name === user.country);
+    const currency = this.currencies.find(currency => currency.code === userSettings.currency);
+    const locale = this.locales.find(locale => locale.name === userSettings.locale);
     
-    if (!selectedCountry) throw new Error(countryNotFound);
-    this.locationService.getStatesByCountryId(selectedCountry.id).pipe(switchMap(states => {
+    if (!country) throw new Error(countryNotFound);
+    this.locationService.getStatesByCountryId(country.id).pipe(switchMap(states => {
       this.states = states;
-      const selectedState = states.find(state => state.name === user.state);
+      const state = states.find(state => state.name === user.state);
 
-      if (!selectedState) throw new Error(stateNotFound);
-      return this.locationService.getCitiesByStateId(selectedState.id).pipe(map(cities => {
+      if (!state) throw new Error(stateNotFound);
+      return this.locationService.getCitiesByStateId(state.id).pipe(map(cities => {
         this.cities = cities;
-        const selectedCity = cities.find(city => city.name === user.city);
+        const city = cities.find(city => city.name === user.city);
 
-        this.profileForm.patchValue({ name: user.name, email: user.email, phone: user.phone, country: selectedCountry, state: selectedState, city: selectedCity, currency: selectedCurrency, language: selectedLocale, theme: this.themesMap[+userSettings.theme], emailNotify: userSettings.emailNotify, showLastLogin: userSettings.showLastLogin });
+        this.profileForm.patchValue({ name: user.name, email: user.email, phone: user.phone, country, state, city, currency, locale, theme: this.themesMap[+userSettings.theme], emailNotify: userSettings.emailNotify, showLastLogin: userSettings.showLastLogin });
       }));
     })).subscribe({ error: () => this.messageService.add({ severity: 'error', summary: 'Error', detail: genericError }) });
   }

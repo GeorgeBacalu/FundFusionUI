@@ -21,5 +21,5 @@ export class LocationService {
 
   getLocales = (): Observable<Locale[]> => this.http.get<Locale[]>(`${this.baseUrl}/${apiLocation}/locales`);
 
-  getCountryPhonesData = (): Observable<CountryPhoneDataResponse[]> => this.http.get<CountryPhoneDataResponse[]>(`${this.baseUrl}/${apiLocation}/countries/phones-data`);
+  getCountriesPhoneData = (): Observable<CountryPhoneDataResponse[]> => this.http.get<CountryPhoneDataResponse[]>(`${this.baseUrl}/${apiLocation}/countries/phones`);
 }

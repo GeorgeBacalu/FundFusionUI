@@ -16,13 +16,15 @@ export class UserService {
 
   setAvatarLoading = (isLoading: boolean): void => this.avatarLoadingSubject.next(isLoading);
   resetAvatarUrl = (): void => this.avatarUrlSubject.next(null);
+  private getCacheBustedUrl = (url: string | null): string | null => url?.split('?')[0] ? `${url.split('?')[0]}?t=${Date.now()}` : null;
 
   constructor(private http: HttpClient) {}
 
-  getProfileData = (): Observable<GetProfileDataResponse> => this.http.get<GetProfileDataResponse>(`${this.baseUrl}/${apiUser}/profile`).pipe(tap(({ userSettings }) =>
-    this.avatarUrlSubject.next(userSettings.avatarUrl?.split('?')[0] ? `${userSettings.avatarUrl?.split('?')[0]}?t=${Date.now()}` : null)));
+  getProfileData = (): Observable<GetProfileDataResponse> => this.http.get<GetProfileDataResponse>(`${this.baseUrl}/${apiUser}/profile`).pipe(tap(({ userSettings }) => this.avatarUrlSubject.next(this.getCacheBustedUrl(userSettings?.avatarUrl ?? null))));
 
   updateProfile = (payload: UpdateProfileRequest): Observable<{ message: string }> => this.http.patch<{ message: string }>(`${this.baseUrl}/${apiUser}/profile`, payload);
+  
+  getAvatarUrl = (): Observable<string | null> => this.http.get(`${this.baseUrl}/${apiUser}/profile/image`, { responseType: 'text' }).pipe(tap(avatarUrl => this.avatarUrlSubject.next(this.getCacheBustedUrl(avatarUrl))));
 
   uploadAvatar = (payload: FormData): Observable<{ message: string }> => this.http.post<{ message: string }>(`${this.baseUrl}/${apiUser}/profile/image`, payload);
 
