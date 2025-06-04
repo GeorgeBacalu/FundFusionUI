@@ -40,7 +40,7 @@
           <label for="phone" class="mb-0">Phone:</label>
           <div *ngIf="editState.phone; else phoneText">
             <div class="flex gap-2">
-              <p-select [options]="countryPhonesData" optionsLabel="label" formControlName="countryPhoneData" placeholder="Country (Prefix)" (onChange)="onCountryChange()"></p-select>
+              <p-select [options]="countriesPhoneData" optionsLabel="label" formControlName="countryPhoneData" placeholder="Country (Prefix)" (onChange)="onCountryChange()"></p-select>
               <ng-container *ngIf="mask"><p-inputMask [mask]="mask" [autoClear]="false" formControlName="phone" placeholder="(999) 999-9999"></p-inputMask></ng-container>
             </div>
             <small class="block mt-2 text-red-500" *ngIf="phone.invalid && (phone.dirty || phone.touched)">
@@ -82,10 +82,10 @@
           <button *ngIf="!editState.currency" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('currency')"></button>
         </div>
         <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
-          <label for="language" class="mb-0">Language:</label>
-          <p-select *ngIf="editState.language; else languageText" inputId="language" [options]="locales" optionLabel="name" formControlName="language" placeholder="Select your preferred language"></p-select>
-          <ng-template #languageText>{{ language.value?.name }}</ng-template>
-          <button *ngIf="!editState.language" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('language')"></button>
+          <label for="locale" class="mb-0">Language:</label>
+          <p-select *ngIf="editState.locale; else localeText" inputId="locale" [options]="locales" optionLabel="name" formControlName="locale" placeholder="Select your preferred language"></p-select>
+          <ng-template #localeText>{{ locale.value?.name }}</ng-template>
+          <button *ngIf="!editState.locale" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('locale')"></button>
         </div>
         <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
           <label for="theme" class="mb-0">Theme:</label>

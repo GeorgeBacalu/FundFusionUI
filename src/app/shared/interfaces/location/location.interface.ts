@@ -32,5 +32,5 @@ export interface CountryPhoneDataResponse {
   label: string;
   code: string;
   prefix: string;
-  length: number;
+  phoneLength: number;
 }

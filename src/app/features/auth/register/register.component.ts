@@ -29,10 +29,10 @@ import examples from 'libphonenumber-js/examples.mobile.json';
 })
 export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
+  countriesPhoneData: CountryPhoneDataResponse[] = [];
   countries: Country[] = [];
   states: State[] = [];
   cities: City[] = [];
-  countryPhonesData: CountryPhoneDataResponse[] = [];
   mask: string = '';
 
   constructor(private formBuilder: FormBuilder, private authService: AuthService, private locationService: LocationService, private messageService: MessageService, private router: Router) {
@@ -58,7 +58,7 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit(): void {
     this.locationService.getCountries().subscribe(countries => this.countries = countries);
-    this.locationService.getCountryPhonesData().subscribe(countryPhonesData => this.countryPhonesData = countryPhonesData);
+    this.locationService.getCountriesPhoneData().subscribe(countriesPhoneData => this.countriesPhoneData = countriesPhoneData);
   }
 
   loadStates(): void {
@@ -81,11 +81,11 @@ export class RegisterComponent implements OnInit {
 
   onCountryChange(): void {
     this.phone.reset();
-    const { prefix, code, length } = this.countryPhoneData.value || {};
+    const { prefix, code, phoneLength } = this.countryPhoneData.value || {};
     if (!prefix || !code) return void (this.mask = '');
 
     const example = getExampleNumber(code, examples);
-    this.mask = example ? `${prefix}${new AsYouType(code).input(example.number).replace(/\d/g, '9').slice(prefix.length)}` : `${prefix}${'9'.repeat(length - prefix.length)}`;
+    this.mask = example ? `${prefix}${new AsYouType(code).input(example.number).replace(/\d/g, '9').slice(prefix.length)}` : `${prefix}${'9'.repeat(phoneLength - prefix.length)}`;
   }
 
   register(): void {
