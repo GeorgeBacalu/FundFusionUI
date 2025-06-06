@@ -10,6 +10,7 @@ import { DividerModule } from 'primeng/divider';
 import { OauthButtonComponent } from '../../../shared/components/oauth-button/oauth-button.component';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../core/services/auth.service';
+import { UserService } from '../../../core/services/user.service';
 import { accountNotFound, genericError, invalidCredentials, loginFailed, userLoggedInSuccessfully } from '../../../shared/constants/constants';
 
 @Component({
@@ -22,7 +23,7 @@ import { accountNotFound, genericError, invalidCredentials, loginFailed, userLog
 export class LoginComponent {
   loginForm!: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private authService: AuthService, private messageService: MessageService, private router: Router) {
+  constructor(private formBuilder: FormBuilder, private authService: AuthService, private userService: UserService, private messageService: MessageService, private router: Router) {
     this.loginForm = this.formBuilder.group({ email: ['', [Validators.required, Validators.email]], password: ['', Validators.required] });
   }
 
@@ -32,7 +33,7 @@ export class LoginComponent {
   login = () => this.authService.login(this.loginForm.value).subscribe({
     next: ({ accessToken, refreshToken }) => {
       localStorage.setItem('accessToken', accessToken), localStorage.setItem('refreshToken', refreshToken);
-      this.messageService.add({ severity: 'success', summary: 'Success', detail: userLoggedInSuccessfully }), this.router.navigate(['/']);
+      this.userService.getAvatarUrl().subscribe(() => (this.messageService.add({ severity: 'success', summary: 'Success', detail: userLoggedInSuccessfully }), this.router.navigate(['/'])))
     },
     error: ({ status }: { status: number }) => this.messageService.add({ severity: 'error', summary: loginFailed, detail: { 404: accountNotFound, 400: invalidCredentials }[status] ?? genericError })
   })

@@ -2,7 +2,7 @@
   <form [formGroup]="loginForm" (ngSubmit)="login()">
     <p-card header="Login" class="w-full sm:w-8 md:w-6 lg:w-4 xl:w-3">
       <div class="field">
-        <label for="email">Email</label>
+        <label for="email">Email <span class="text-red-500">*</span></label>
         <input type="text" id="email" formControlName="email" pInputText class="w-full" placeholder="Enter your email" autocomplete="email" />
         <small class="block text-red-500" *ngIf="email.invalid && (email.dirty || email.touched)">
           <div *ngIf="email.errors?.['required']">Email is required</div>
@@ -10,7 +10,7 @@
         </small>
       </div>
       <div class="field">
-        <label for="password">Password</label>
+        <label for="password">Password <span class="text-red-500">*</span></label>
         <p-password inputId="password" formControlName="password" inputStyleClass="w-full" styleClass="w-full" placeholder="Enter your password" [feedback]="false" [toggleMask]="true" />
         <small class="block text-red-500" *ngIf="password.invalid && (password.dirty || password.touched)">
           <div *ngIf="password.errors?.['required']">Password is required</div>
