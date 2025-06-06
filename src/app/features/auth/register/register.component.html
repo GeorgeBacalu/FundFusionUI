@@ -2,14 +2,14 @@
   <form [formGroup]="registerForm" (ngSubmit)="register()">
     <p-card header="Register" class="w-full sm:w-8 md:w-6 lg:w-4 xl:w-3">
       <div class="field">
-        <label for="name">Name</label>
+        <label for="name">Name <span class="text-red-500">*</span></label>
         <input type="text" id="name" pInputText formControlName="name" class="w-full" placeholder="Enter your name" autocomplete="name" />
         <small class="block text-red-500" *ngIf="name.invalid && (name.dirty || name.touched)">
           <div *ngIf="name.errors?.['required']">Name is required</div>
         </small>
       </div>
       <div class="field">
-        <label for="email">Email</label>
+        <label for="email">Email <span class="text-red-500">*</span></label>
         <input type="email" id="email" pInputText formControlName="email" class="w-full" placeholder="Enter your email" autocomplete="email" />
         <small class="block text-red-500" *ngIf="email.invalid && (email.dirty || email.touched)">
           <div *ngIf="email.errors?.['required']">Email is required</div>
@@ -17,7 +17,7 @@
         </small>
       </div>
       <div class="field">
-        <label for="password">Password</label>
+        <label for="password">Password <span class="text-red-500">*</span></label>
         <p-password inputId="password" formControlName="password" inputStyleClass="w-full" styleClass="w-full" placeholder="Enter your password" [feedback]="false" [toggleMask]="true" />
         <small class="block text-red-500" *ngIf="password.invalid && (password.dirty || password.touched)">
           <div *ngIf="password.errors?.['required']">Password is required</div>
@@ -25,7 +25,7 @@
         </small>
       </div>
       <div class="field">
-        <label for="confirmedPassword">Confirmed password</label>
+        <label for="confirmedPassword">Confirmed password <span class="text-red-500">*</span></label>
         <p-password inputId="confirmedPassword" formControlName="confirmedPassword" inputStyleClass="w-full" styleClass="w-full" placeholder="Confirm your password" [feedback]="false" [toggleMask]="true" />
         <small class="block text-red-500" *ngIf="confirmedPassword.invalid && (confirmedPassword.dirty || confirmedPassword.touched)">
           <div *ngIf="confirmedPassword.errors?.['required']">Confirmed password is required</div>
@@ -33,7 +33,7 @@
         <small class="block text-red-500" *ngIf="registerForm.errors?.['passwordMismatch'] && confirmedPassword.valid && password.valid">Passwords don't match</small>
       </div>
       <div class="field">
-        <label for="phone">Phone</label>
+        <label for="phone">Phone <span class="text-red-500">*</span></label>
         <div class="flex gap-2 w-full">
           <p-select [options]="countriesPhoneData" optionLabel="label" formControlName="countryPhoneData" class="w-6" placeholder="Country (Prefix)" (onChange)="onCountryChange()"></p-select>
           <ng-container *ngIf="mask"><p-inputMask [mask]="mask" [autoClear]="false" formControlName="phone" class="w-7" placeholder="(999) 999-9999"></p-inputMask></ng-container>
@@ -44,15 +44,15 @@
         <small class="block text-red-500" *ngIf="registerForm.errors?.['invalidPhone'] && (phone.dirty || phone.touched)">Invalid phone number</small>
       </div>
       <div class="field">
-        <label for="country">Country</label>
+        <label for="country">Country <span class="text-red-500">*</span></label>
         <p-select inputId="country" [options]="countries" optionLabel="name" formControlName="country" styleClass="w-full" placeholder="Select your country" (onChange)="loadStates()"></p-select>
       </div>
       <div class="field">
-        <label for="state">State</label>
+        <label for="state">State <span class="text-red-500">*</span></label>
         <p-select inputId="state" [options]="states" optionLabel="name" formControlName="state" styleClass="w-full" placeholder="Select your state" (onChange)="loadCities()"></p-select>
       </div>
       <div class="field">
-        <label for="city">City</label>
+        <label for="city">City <span class="text-red-500">*</span></label>
         <p-select inputId="city" [options]="cities" optionLabel="name" formControlName="city" styleClass="w-full" placeholder="Select your city"></p-select>
       </div>
       <p-button type="submit" label="Register" styleClass="w-full" [disabled]="registerForm.invalid"></p-button>
