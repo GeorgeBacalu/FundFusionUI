@@ -34,3 +34,4 @@ export const passwordChangedSuccessfully = "Password changed successfully. Pleas
 export const apiAuth = "api/auth";
 export const apiLocation = "api/locations";
 export const apiUser = "api/users";
+export const apiCategory = "api/categories";

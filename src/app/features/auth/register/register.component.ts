@@ -7,7 +7,7 @@ import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputMaskModule } from 'primeng/inputmask';
 import { PasswordModule } from 'primeng/password';
-import { SelectModule } from 'primeng/select';
+import { DropdownModule } from 'primeng/dropdown';
 import { DividerModule } from 'primeng/divider';
 import { OauthButtonComponent } from "../../../shared/components/oauth-button/oauth-button.component";
 import { MessageService } from 'primeng/api';
@@ -23,7 +23,7 @@ import examples from 'libphonenumber-js/examples.mobile.json';
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [NgIf, RouterModule, ReactiveFormsModule, ButtonModule, CardModule, InputTextModule, InputMaskModule, PasswordModule, SelectModule, DividerModule, OauthButtonComponent],
+  imports: [NgIf, RouterModule, ReactiveFormsModule, ButtonModule, CardModule, InputTextModule, InputMaskModule, PasswordModule, DropdownModule, DividerModule, OauthButtonComponent],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })

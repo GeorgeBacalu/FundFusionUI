@@ -35,7 +35,7 @@
       <div class="field">
         <label for="phone">Phone <span class="text-red-500">*</span></label>
         <div class="flex gap-2 w-full">
-          <p-select [options]="countriesPhoneData" optionLabel="label" formControlName="countryPhoneData" class="w-6" placeholder="Country (Prefix)" (onChange)="onCountryChange()"></p-select>
+          <p-dropdown [options]="countriesPhoneData" optionLabel="label" formControlName="countryPhoneData" [filter]="true" class="w-6" placeholder="Country (Prefix)" (onChange)="onCountryChange()"></p-dropdown>
           <ng-container *ngIf="mask"><p-inputMask [mask]="mask" [autoClear]="false" formControlName="phone" class="w-7" placeholder="(999) 999-9999"></p-inputMask></ng-container>
         </div>
         <small class="block text-red-500" *ngIf="phone.invalid && (phone.dirty || phone.touched)">
@@ -45,15 +45,15 @@
       </div>
       <div class="field">
         <label for="country">Country <span class="text-red-500">*</span></label>
-        <p-select inputId="country" [options]="countries" optionLabel="name" formControlName="country" styleClass="w-full" placeholder="Select your country" (onChange)="loadStates()"></p-select>
+        <p-dropdown inputId="country" [options]="countries" optionLabel="name" formControlName="country" styleClass="w-full" [filter]="true" placeholder="Select your country" (onChange)="loadStates()"></p-dropdown>
       </div>
       <div class="field">
         <label for="state">State <span class="text-red-500">*</span></label>
-        <p-select inputId="state" [options]="states" optionLabel="name" formControlName="state" styleClass="w-full" placeholder="Select your state" (onChange)="loadCities()"></p-select>
+        <p-dropdown inputId="state" [options]="states" optionLabel="name" formControlName="state" styleClass="w-full" [filter]="true" placeholder="Select your state" (onChange)="loadCities()"></p-dropdown>
       </div>
       <div class="field">
         <label for="city">City <span class="text-red-500">*</span></label>
-        <p-select inputId="city" [options]="cities" optionLabel="name" formControlName="city" styleClass="w-full" placeholder="Select your city"></p-select>
+        <p-dropdown inputId="city" [options]="cities" optionLabel="name" formControlName="city" styleClass="w-full" [filter]="true" placeholder="Select your city"></p-dropdown>
       </div>
       <p-button type="submit" label="Register" styleClass="w-full" [disabled]="registerForm.invalid"></p-button>
       <p-divider align="center" type="solid">OR</p-divider>

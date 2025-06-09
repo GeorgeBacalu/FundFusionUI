@@ -1,6 +1,30 @@
 <div class="flex flex-column h-screen">
   <app-navbar></app-navbar>
-  <div class="flex-1 flex justify-content-center align-items-center">
-    <h1 class="text-3xl font-semibold">Welcome to Fund Fusion!</h1>
+  <div class="flex-1 flex flex-column align-items-center p-4 gap-4">
+    <p-tabs [(value)]="selectedIndex" (valueChange)="onTabChange($event)">
+      <p-tablist>
+        <p-tab value="0">Expense</p-tab>
+        <p-tab value="1">Income</p-tab>
+      </p-tablist>
+    </p-tabs>
+    <p-accordion *ngIf="categories.length; else emptyState" [multiple]="true" class="w-6 mx-auto">
+      <p-accordionTab *ngFor="let parent of categories" [disabled]="!parent.subcategories.length">
+        <ng-template pTemplate="header" class="flex align-items-center gap-3">
+          <img *ngIf="parent.imageUrl; else parentDefaultIcon" [src]="parent.imageUrl" [alt]="parent.name" class="w-2rem h-2rem object-fit-contain" />
+          <ng-template #parentDefaultIcon><span class="pi pi-folder-open text-lg text-gray-500"></span></ng-template>
+          <span class="font-semibold text-base">{{ parent.name }}</span>
+        </ng-template>
+        <p-accordion [multiple]="true">
+          <p-accordionTab *ngFor="let child of parent.subcategories" [disabled]="!child.subcategories.length">
+            <ng-template pTemplate="header" class="flex align-items-center gap-3">
+              <img *ngIf="child.imageUrl; else childDefaultIcon" [src]="child.imageUrl" [alt]="child.name" class="w-2rem h-2rem object-fit-contain" />
+              <ng-template #childDefaultIcon><span class="pi pi-folder text-lg text-gray-500"></span></ng-template>
+              <span class="font-medium">{{ child.name }}</span>
+            </ng-template>
+          </p-accordionTab>
+        </p-accordion>
+      </p-accordionTab>
+    </p-accordion>
+    <ng-template #emptyState><div class="flex justify-content-center align-items-center h-full"><p class="text-3xl text-gray-600 font-bold">No categories available</p></div></ng-template>
   </div>
 </div>

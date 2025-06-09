@@ -23,7 +23,7 @@ export class NavbarComponent implements OnInit {
 
   constructor(private authService: AuthService, private userService: UserService, private messageService: MessageService, private router: Router) {}
 
-  ngOnInit(): void { this.avatarUrl$ = this.userService.avatarUrl$; this.avatarLoading$ = this.userService.avatarLoading$; }
+  ngOnInit(): void { this.userService.getAvatarUrl().subscribe(_ => (this.avatarUrl$ = this.userService.avatarUrl$, this.avatarLoading$ = this.userService.avatarLoading$)); }
 
   navigateToHome = () => this.router.navigate(['/']);
   onLoadStart = () => this.userService.setAvatarLoading(true);
