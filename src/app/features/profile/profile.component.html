@@ -40,7 +40,7 @@
           <label for="phone" class="mb-0">Phone:</label>
           <div *ngIf="editState.phone; else phoneText">
             <div class="flex gap-2">
-              <p-select [options]="countriesPhoneData" optionsLabel="label" formControlName="countryPhoneData" placeholder="Country (Prefix)" (onChange)="onCountryChange()"></p-select>
+              <p-dropdown [options]="countriesPhoneData" optionsLabel="label" formControlName="countryPhoneData" [filter]="true" placeholder="Country (Prefix)" (onChange)="onCountryChange()"></p-dropdown>
               <ng-container *ngIf="mask"><p-inputMask [mask]="mask" [autoClear]="false" formControlName="phone" placeholder="(999) 999-9999"></p-inputMask></ng-container>
             </div>
             <small class="block mt-2 text-red-500" *ngIf="phone.invalid && (phone.dirty || phone.touched)">
@@ -56,19 +56,19 @@
       <div class="p-fluid formgrid grid">
         <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
           <label for="country" class="mb-0">Country:</label>
-          <p-select *ngIf="editState.country; else countryText" inputId="country" [options]="countries" optionLabel="name" formControlName="country" placeholder="Select your country" (onChange)="loadStates()"></p-select>
+          <p-dropdown *ngIf="editState.country; else countryText" inputId="country" [options]="countries" optionLabel="name" formControlName="country" [filter]="true" placeholder="Select your country" (onChange)="loadStates()"></p-dropdown>
           <ng-template #countryText>{{ country.value?.name }}</ng-template>
           <button *ngIf="!editState.country" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('country')"></button>
         </div>
         <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
           <label for="state" class="mb-0">State:</label>
-          <p-select *ngIf="editState.state; else stateText" inputId="state" [options]="states" optionLabel="name" formControlName="state" placeholder="Select your state" (onChange)="loadCities()"></p-select>
+          <p-dropdown *ngIf="editState.state; else stateText" inputId="state" [options]="states" optionLabel="name" formControlName="state" [filter]="true" placeholder="Select your state" (onChange)="loadCities()"></p-dropdown>
           <ng-template #stateText>{{ state.value?.name }}</ng-template>
           <button *ngIf="!editState.state" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('state')"></button>
         </div>
         <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
           <label for="city" class="mb-0">City:</label>
-          <p-select *ngIf="editState.city; else cityText" inputId="city" [options]="cities" optionLabel="name" formControlName="city" placeholder="Select your city"></p-select>
+          <p-dropdown *ngIf="editState.city; else cityText" inputId="city" [options]="cities" optionLabel="name" formControlName="city" [filter]="true" placeholder="Select your city"></p-dropdown>
           <ng-template #cityText>{{ city.value?.name }}</ng-template>
           <button *ngIf="!editState.city" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('city')"></button>
         </div>
@@ -77,19 +77,19 @@
       <div class="p-fluid formgrid grid">
         <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
           <label for="currency" class="mb-0">Currency:</label>
-          <p-select *ngIf="editState.currency; else currencyText" inputId="currency" [options]="currencies" optionLabel="code" formControlName="currency" placeholder="Select your currency"></p-select>
+          <p-dropdown *ngIf="editState.currency; else currencyText" inputId="currency" [options]="currencies" optionLabel="code" formControlName="currency" [filter]="true" class="w-10rem" placeholder="Select your currency"></p-dropdown>
           <ng-template #currencyText>{{ currency.value?.code }}</ng-template>
           <button *ngIf="!editState.currency" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('currency')"></button>
         </div>
         <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
           <label for="locale" class="mb-0">Language:</label>
-          <p-select *ngIf="editState.locale; else localeText" inputId="locale" [options]="locales" optionLabel="name" formControlName="locale" placeholder="Select your preferred language"></p-select>
+          <p-dropdown *ngIf="editState.locale; else localeText" inputId="locale" [options]="locales" optionLabel="name" formControlName="locale" [filter]="true" placeholder="Select your preferred language"></p-dropdown>
           <ng-template #localeText>{{ locale.value?.name }}</ng-template>
           <button *ngIf="!editState.locale" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('locale')"></button>
         </div>
         <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
           <label for="theme" class="mb-0">Theme:</label>
-          <p-select *ngIf="editState.theme; else themeText" inputId="theme" [options]="themes" formControlName="theme" placeholder="Select your preferred theme"></p-select>
+          <p-dropdown *ngIf="editState.theme; else themeText" inputId="theme" [options]="themes" formControlName="theme" placeholder="Select your preferred theme"></p-dropdown>
           <ng-template #themeText>{{ theme.value }}</ng-template>
           <button *ngIf="!editState.theme" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('theme')"></button>
         </div>

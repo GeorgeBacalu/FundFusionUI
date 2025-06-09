@@ -11,7 +11,7 @@ import { DividerModule } from 'primeng/divider';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputMaskModule } from 'primeng/inputmask';
 import { InputSwitchModule } from 'primeng/inputswitch';
-import { SelectModule } from 'primeng/select';
+import { DropdownModule } from 'primeng/dropdown';
 import { NavbarComponent } from '../../layout/navbar/navbar.component';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { UserService } from '../../core/services/user.service';
@@ -27,7 +27,7 @@ import examples from 'libphonenumber-js/examples.mobile.json';
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [NgIf, RouterModule, ReactiveFormsModule, CardModule, AvatarModule, MenuModule, ButtonModule, DividerModule, InputTextModule, InputMaskModule, InputSwitchModule, SelectModule, NavbarComponent, AsyncPipe],
+  imports: [NgIf, RouterModule, ReactiveFormsModule, CardModule, AvatarModule, MenuModule, ButtonModule, InputTextModule, InputMaskModule, InputSwitchModule, DropdownModule, DividerModule, NavbarComponent, AsyncPipe],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })

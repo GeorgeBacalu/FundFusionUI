@@ -1,6 +1,25 @@
 <div class="flex flex-column h-screen">
   <app-navbar></app-navbar>
-  <div class="flex-1 flex justify-content-center align-items-center">
-    <h1 class="text-3xl font-semibold">Welcome to Fund Fusion!</h1>
+  <div class="flex-1 flex flex-column p-4 gap-4">
+    <div class="flex justify-content-center">
+      <p-tabs [(value)]="selectedIndex" (valueChange)="onTabChange($event)">
+        <p-tablist>
+          <p-tab value="0">Expense</p-tab>
+          <p-tab value="1">Income</p-tab>
+        </p-tablist>
+      </p-tabs>
+    </div>
+    <div *ngIf="categories.length; else emptyState" class="grid">
+      <div *ngFor="let category of categories" class="col-12 sm:col-6 md:col-4 lg:col-3">
+        <p-card (click)="navigateToSubcategories(category.id)" class="cursor-pointer hover:shadow-4 transition-all">
+          <div class="flex flex-column align-items-center gap-2">
+            <img *ngIf="category.imageUrl; else defaultIcon" [src]="category.imageUrl" [alt]="category.name" class="w-7rem h-7rem border-round object-fit-contain" />
+            <ng-template #defaultIcon><span class="pi pi-folder-open text-4xl text-gray-500"></span></ng-template>
+            <span class="font-medium text-lg text-center">{{ category.name }}</span>
+          </div>
+        </p-card>
+      </div>
+    </div>
+    <ng-template #emptyState><div class="flex justify-content-center align-items-center h-full"><p>No categories available</p></div></ng-template>
   </div>
 </div>
