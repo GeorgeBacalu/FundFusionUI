@@ -7,6 +7,7 @@ import { ResetPasswordComponent } from './features/auth/reset-password/reset-pas
 import { OauthCallbackComponent } from './shared/components/oauth-callback/oauth-callback.component';
 import { ProfileComponent } from './features/profile/profile.component';
 import { HomeComponent } from './features/home/home.component';
+import { CategoryComponent } from './features/category/category/category.component';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
 
@@ -18,5 +19,6 @@ export const routes: Routes = [
     { path: 'reset-password', component: ResetPasswordComponent, canActivate: [guestGuard] },
     { path: 'oauth/callback', component: OauthCallbackComponent, canActivate: [guestGuard] },
     { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
-    { path: '', component: HomeComponent, canActivate: [authGuard] }
+    { path: '', component: HomeComponent, canActivate: [authGuard] },
+    { path: 'categories/:id', component: CategoryComponent, canActivate: [authGuard] }
 ];

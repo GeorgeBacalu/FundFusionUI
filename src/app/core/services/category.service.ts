@@ -12,4 +12,6 @@ export class CategoryService {
   constructor(private http: HttpClient) {}
 
   getParents = (isIncome: boolean): Observable<Category[]> => this.http.get<Category[]>(`${this.baseUrl}/${apiCategory}?isIncome=${isIncome}`); 
+
+  getChildren = (parentId: string): Observable<Category[]> => this.http.get<Category[]>(`${this.baseUrl}/${apiCategory}/${parentId}`);
 }
