@@ -16,6 +16,7 @@ export const profileLoadFailed = "Failed to load profile data";
 export const profileUpdateFailed = "Failed to update profile data";
 export const avatarUploadFailed = "Failed to upload avatar";
 export const avatarRemoveFailed = "Failed to remove avatar";
+export const failedToAddCategory = "Failed to add category";
 
 export const payloadTooLarge = "Request body too large";
 export const fileTooLarge = "The selected file exceeds the 20MB upload limit";
