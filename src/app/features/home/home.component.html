@@ -7,51 +7,87 @@
         <p-tab value="1">Income</p-tab>
       </p-tablist>
     </p-tabs>
-    <p-button label="Add Category" icon="pi pi-plus" (click)="this.isDialogShowing = true"></p-button>
-    <p-dialog [(visible)]="isDialogShowing" [modal]="true" header="Add Category" (onHide)="resetForm()">
-      <form [formGroup]="addCategoryForm" (ngSubmit)="addCategory()">
-        <div class="field">
-          <label for="name">Name <span class="text-red-500">*</span></label>
-          <input type="text" id="name" pInputText formControlName="name" class="w-full" placeholder="Enter name" autocomplete="name" />
-          <small class="block mt-2 text-red-500" *ngIf="name.invalid && (name.dirty || name.touched)">
-            <div *ngIf="name.errors?.['required']">Name is required</div>
-          </small>
-        </div>
-        <div class="field mt-3">
-          <label for="financialType">Financial type <span class="text-red-500">*</span></label>
-          <p-dropdown id="financialType" [options]="financialTypes" optionLabel="label" optionValue="value" formControlName="financialType" class="w-full" placeholder="Select financial type"></p-dropdown>
-          <small class="block mt-2 text-red-500" *ngIf="financialType.invalid && (financialType.dirty || financialType.touched)">
-            <div *ngIf="financialType.errors?.['required']">Financial type is required</div>
-          </small>
-        </div>
-        <div class="field mt-3">
-          <label for="imageUpload">Image</label>
-          <input type="file" id="imageUpload" #fileInput (change)="onImageSelected($event)" accept="image/*" class="w-full" />
-        </div>
-        <div class="flex justify-content-end gap-2">
-          <p-button label="Cancel" icon="pi pi-times" severity="secondary" (onClick)="confirmCancel()"></p-button>
-          <p-button type="submit" label="Save" icon="pi pi-save" [disabled]="addCategoryForm.invalid"></p-button>
-        </div>
-      </form>
-    </p-dialog>
+    <p-button label="Add Category" icon="pi pi-plus" (click)="isCategoryDialogShowing = true"></p-button>
     <p-accordion *ngIf="categories.length; else emptyState" [multiple]="true" class="w-6 mx-auto">
-      <p-accordionTab *ngFor="let parent of categories" [disabled]="!parent.subcategories.length">
-        <ng-template pTemplate="header" class="flex align-items-center gap-3">
-          <img *ngIf="parent.imageUrl; else parentDefaultIcon" [src]="parent.imageUrl" [alt]="parent.name" class="w-2rem h-2rem object-fit-contain" />
-          <ng-template #parentDefaultIcon><span class="pi pi-folder-open text-lg text-gray-500"></span></ng-template>
+      <p-accordionTab *ngFor="let parent of categories">
+        <ng-template pTemplate="header">
+          <img *ngIf="parent.imageUrl; else defaultIcon" [src]="parent.imageUrl" [alt]="parent.name" class="w-2rem h-2rem object-contain" />
+          <ng-template #defaultIcon><span class="pi pi-folder-open text-lg text-gray-500"></span></ng-template>
           <span class="font-semibold text-base">{{ parent.name }}</span>
         </ng-template>
-        <p-accordion [multiple]="true">
-          <p-accordionTab *ngFor="let child of parent.subcategories" [disabled]="!child.subcategories.length">
-            <ng-template pTemplate="header" class="flex align-items-center gap-3">
-              <img *ngIf="child.imageUrl; else childDefaultIcon" [src]="child.imageUrl" [alt]="child.name" class="w-2rem h-2rem object-fit-contain" />
-              <ng-template #childDefaultIcon><span class="pi pi-folder text-lg text-gray-500"></span></ng-template>
+        <div class="flex justify-content-center mb-3"><p-button type="button" label="Add Subcategory" icon="pi pi-plus" (click)="isSubcategoryDialogShowing = true"></p-button></div>
+        <p-accordion [multiple]="true" *ngIf="parent.subcategories.length; else emptyState">
+          <p-accordionTab *ngFor="let child of parent.subcategories">
+            <ng-template pTemplate="header">
+              <img *ngIf="child.imageUrl; else defaultIcon" [src]="child.imageUrl" [alt]="child.name" class="w-2rem h-2rem object-contain" />
+              <ng-template #defaultIcon><span class="pi pi-folder text-lg text-gray-500"></span></ng-template>
               <span class="font-medium">{{ child.name }}</span>
             </ng-template>
           </p-accordionTab>
         </p-accordion>
+        <ng-template #emptyState><div class="flex justify-content-center"><p class="text-2xl text-gray-600 font-bold">No subcategories available</p></div></ng-template>
       </p-accordionTab>
     </p-accordion>
-    <ng-template #emptyState><div class="flex justify-content-center align-items-center h-full"><p class="text-3xl text-gray-600 font-bold">No categories available</p></div></ng-template>
+    <ng-template #emptyState><div class="flex justify-content-center items-center h-full"><p class="text-3xl text-gray-600 font-bold">No categories available</p></div></ng-template>
   </div>
 </div>
+<p-dialog [(visible)]="isCategoryDialogShowing" [modal]="true" header="Add Category" [styleClass]="'w-30rem h-auto'" (onHide)="resetCategoryForm()">
+  <form [formGroup]="addCategoryForm" (ngSubmit)="addCategory()">
+    <div class="field">
+      <label for="name">Name <span class="text-red-500">*</span></label>
+      <input type="text" id="name" pInputText formControlName="name" class="w-full" placeholder="Enter name" autocomplete="name" />
+      <small class="block mt-2 text-red-500" *ngIf="name.invalid && (name.dirty || name.touched)">
+        <div *ngIf="name.errors?.['required']">Name is required</div>
+      </small>
+    </div>
+    <div class="field mt-3">
+      <label for="financialType">Financial type <span class="text-red-500">*</span></label>
+      <p-dropdown id="financialType" [options]="financialTypes" optionLabel="label" optionValue="value" formControlName="financialType" class="w-full" placeholder="Select financial type"></p-dropdown>
+      <small class="block mt-2 text-red-500" *ngIf="financialType.invalid && (financialType.dirty || financialType.touched)">
+        <div *ngIf="financialType.errors?.['required']">Financial type is required</div>
+      </small>
+    </div>
+    <div class="field mt-3">
+      <label for="imageUpload">Image</label>
+      <input type="file" id="imageUpload" #categoryFileInput (change)="onCategoryImageSelected($event)" accept="image/*" class="w-full" />
+    </div>
+    <div class="flex justify-content-end gap-2">
+      <p-button label="Cancel" icon="pi pi-times" severity="secondary" (onClick)="confirmCategoryCancel()"></p-button>
+      <p-button type="submit" label="Save" icon="pi pi-save" [disabled]="addCategoryForm.invalid"></p-button>
+    </div>
+  </form>
+</p-dialog>
+<p-dialog [(visible)]="isSubcategoryDialogShowing" [modal]="true" header="Add Subcategory" [styleClass]="'w-30rem h-auto'" (onHide)="resetSubcategoryForm()">
+  <form [formGroup]="addSubcategoryForm" (ngSubmit)="addSubcategory()">
+    <div class="field">
+      <label for="name">Name <span class="text-red-500">*</span></label>
+      <input type="text" id="name" pInputText formControlName="name" class="w-full" placeholder="Enter name" autocomplete="name" />
+      <small class="block mt-2 text-red-500" *ngIf="name.invalid && (name.dirty || name.touched)">
+        <div *ngIf="name.errors?.['required']">Name is required</div>
+      </small>
+    </div>
+    <div class="field">
+      <label for="parentCategory">Parent Category <span class="text-red-500">*</span></label>
+      <p-dropdown inputId="parentCategory" [options]="categories" optionLabel="name" formControlName="parentCategory" [filter]="true" class="w-full" placeholder="Select parent category">
+        <ng-template let-category pTemplate="item">
+          <div class="flex align-items-center gap-2">
+            <img *ngIf="category.imageUrl; else defaultIcon" [src]="category.imageUrl" [alt]="category.name" class="w-2rem h-2rem object-fit-contain" />
+            <ng-template #defaultIcon><span class="pi pi-folder text-lg text-gray-500"></span></ng-template>
+            <span class="font-semibold text-base">{{ category.name }}</span>
+          </div>
+        </ng-template>
+      </p-dropdown>
+      <small class="block mt-2 text-red-500" *ngIf="parentCategory.invalid && (parentCategory.dirty || parentCategory.touched)">
+        <div *ngIf="parentCategory.errors?.['required']">Parent category is required</div>
+      </small>
+    </div>
+    <div class="field mt-3">
+      <label for="imageUpload">Image</label>
+      <input type="file" id="imageUpload" #subCategoryFileInput (change)="onSubcategoryImageSelected($event)" accept="image/*" class="w-full" />
+    </div>
+    <div class="flex justify-content-end gap-2">
+      <p-button label="Cancel" icon="pi pi-times" severity="secondary" (onClick)="confirmSubcategoryCancel()"></p-button>
+      <p-button type="submit" label="Save" icon="pi pi-save" [disabled]="addSubcategoryForm.invalid"></p-button>
+    </div>
+  </form>
+</p-dialog>
