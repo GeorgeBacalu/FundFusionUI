@@ -12,4 +12,6 @@ export class CategoryService {
   constructor(private http: HttpClient) {}
 
   getTreeByType = (isIncome: boolean): Observable<Category[]> => this.http.get<Category[]>(`${this.baseUrl}/${apiCategory}/tree?isIncome=${isIncome}`);
+
+  add = (payload: FormData): Observable<{ message: string }> => this.http.post<{ message: string }>(`${this.baseUrl}/${apiCategory}`, payload);
 }
