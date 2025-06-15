@@ -17,7 +17,7 @@
         </small>
         <div class="mt-1"><a routerLink="/forgot-password" class="text-primary no-underline">Forgot your password?</a></div>
       </div>
-      <p-button type="submit" label="Login" styleClass="w-full" [disabled]="loginForm.invalid"></p-button>
+      <p-button type="submit" label="Login" styleClass="w-full" [disabled]="loginForm.invalid" />
       <p-divider align="center" type="solid">OR</p-divider>
       <div class="space-y-2">
         <app-oauth-button provider="Google" />

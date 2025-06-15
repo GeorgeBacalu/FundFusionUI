@@ -55,7 +55,7 @@
         <label for="city">City <span class="text-red-500">*</span></label>
         <p-dropdown inputId="city" [options]="cities" optionLabel="name" formControlName="city" [filter]="true" styleClass="w-full" placeholder="Select your city"></p-dropdown>
       </div>
-      <p-button type="submit" label="Register" styleClass="w-full" [disabled]="registerForm.invalid"></p-button>
+      <p-button type="submit" label="Register" styleClass="w-full" [disabled]="registerForm.invalid" />
       <p-divider align="center" type="solid">OR</p-divider>
       <div>
         <app-oauth-button provider="Google" />

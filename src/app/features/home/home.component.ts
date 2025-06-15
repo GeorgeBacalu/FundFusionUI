@@ -26,7 +26,9 @@ export class HomeComponent implements OnInit {
   selectedIndex: string | number = 0;
   
   isParentMode: boolean = true;
+  isEditMode: boolean = false;
   isDialogShowing: boolean = false;
+  editingCategoryId: string | null = null;
   categoryForm!: FormGroup;
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
@@ -46,37 +48,44 @@ export class HomeComponent implements OnInit {
 
   onTabChange = (index: string | number) => (this.selectedIndex = +index, this.loadCategories())
 
-  openDialog(isParent: boolean, parentCategory?: Category) {
-    this.isParentMode = isParent, this.isDialogShowing = true;
-    this.financialType?.setValidators(isParent ? Validators.required : null);
-    this.parentCategory?.setValidators(isParent ? null : Validators.required);
-    if (!isParent) this.parentCategory?.setValue(parentCategory);
+  openDialog(isParent: boolean, isEditing: boolean, category?: Category) {
+    this.isParentMode = isParent, this.isEditMode = isEditing, this.isDialogShowing = true;
+    this.editingCategoryId = isEditing && category?.id || null;
+    this.financialType.setValidators(isParent ? Validators.required : null), this.financialType.updateValueAndValidity();
+    this.parentCategory.setValidators(!isParent ? Validators.required : null), this.parentCategory.updateValueAndValidity();
+
+    if (!category) return;
+    isEditing && (this.name.setValue(category.name), this.imagePreviewUrl = category.imageUrl ?? null);
+    isParent ? this.financialType.setValue(category.isIncome) : this.parentCategory.setValue(isEditing ? this.categories.find(parent => parent.id === category.parentId) ?? null : category);
     this.categoryForm.updateValueAndValidity();
   }
 
-  resetForm = () => {
-    if (this.imagePreviewUrl) URL.revokeObjectURL(this.imagePreviewUrl);
-    this.categoryForm.reset(), this.fileInput.nativeElement.value = '', this.imagePreviewUrl = null
+  resetForm(): void {
+    this.imagePreviewUrl && URL.revokeObjectURL(this.imagePreviewUrl);
+    this.categoryForm.reset(), this.imagePreviewUrl = null, this.fileInput.nativeElement.value = '';
   }
 
   onImageSelected(event: Event): void {
-    const file = (event.target as HTMLInputElement)?.files?.[0];
-    this.image?.setValue(file), this.imagePreviewUrl = file ? URL.createObjectURL(file) : null;
+    const input = event.target as HTMLInputElement, file = input.files?.[0];
+    file && (this.image.setValue(file), this.imagePreviewUrl = URL.createObjectURL(file))
+    input.value = '';
   }
+
+  removeImage = () => (this.imagePreviewUrl && URL.revokeObjectURL(this.imagePreviewUrl), this.imagePreviewUrl = null, this.image.setValue(null))
 
   confirmCancel = () => this.confirmationService.confirm({ header: 'Confirm Cancel', message: 'Are you sure you want to cancel? All changes will be lost.', icon: 'pi pi-info-circle', acceptLabel: 'Yes', rejectLabel: 'Cancel',
     acceptIcon: "pi pi-check", rejectIcon: "pi pi-times", acceptButtonStyleClass: 'p-button-danger', rejectButtonStyleClass: 'p-button-secondary', accept: () => this.isDialogShowing = false });
 
-  addCategory(): void {
+  saveCategory(): void {
     if (this.categoryForm.invalid) return;
     const { name, image, financialType, parentCategory } = this.categoryForm.value;
     
     const formData = new FormData();
     formData.append('name', name);
-    if (image) formData.append('image', image);
+    image && formData.append('image', image);
     this.isParentMode ? formData.append('isIncome', financialType.toString()) : formData.append('parentId', parentCategory.id);
-  
-    this.categoryService.add(formData).subscribe({
+
+    (this.isEditMode && this.editingCategoryId ? this.categoryService.edit(formData, this.editingCategoryId) : this.categoryService.add(formData)).subscribe({
       next: ({ message }) => (this.messageService.add({ severity: 'success', summary: 'Success', detail: message }), this.isDialogShowing = false, this.loadCategories()),
       error: ({ error }) => this.messageService.add({ severity: 'error', summary: error?.title || 'Error', detail: error?.detail || failedToAddCategory })
     })
