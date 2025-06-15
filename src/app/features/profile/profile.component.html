@@ -9,7 +9,7 @@
         </p-avatar>
         <ng-template #defaultIcon><p-avatar icon="pi pi-user" shape="circle" size="xlarge" styleClass="cursor-pointer" (click)="menu.toggle($event)"></p-avatar></ng-template>
         <p-menu #menu [popup]="true" [model]="menuItems"></p-menu>
-        <input #fileInput type="file" accept="image/*" hidden (change)="uploadAvatar($event)" />
+        <input type="file" #fileInput (change)="uploadAvatar($event)" accept="image/*" hidden />
       </div>
       <p-divider align="left"><b>Personal Info</b></p-divider>
       <div class="p-fluid formgrid grid">
@@ -22,7 +22,7 @@
             </small>
           </div>
           <ng-template #nameText>{{ name.value }}</ng-template>
-          <button *ngIf="!editState.name" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('name')"></button>
+          <p-button *ngIf="!editState.name" icon="pi pi-pencil" size="small" (click)="toggleEdit('name')" />
         </div>
         <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
           <label for="email" class="mb-0">Email:</label>
@@ -34,7 +34,7 @@
             </small>
           </div>
           <ng-template #emailText>{{ email.value }}</ng-template>
-          <button *ngIf="!editState.email" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('email')"></button>
+          <p-button *ngIf="!editState.email" icon="pi pi-pencil" size="small" (click)="toggleEdit('email')" />
         </div>
         <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
           <label for="phone" class="mb-0">Phone:</label>
@@ -49,7 +49,7 @@
             <small class="block mt-2 text-red-500" *ngIf="profileForm.errors?.['invalidPhone'] && (phone.dirty || phone.touched)">Invalid phone number</small>
           </div>
           <ng-template #phoneText>{{ phone.value }}</ng-template>
-          <button *ngIf="!editState.phone" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEditPhone()"></button>
+          <p-button *ngIf="!editState.phone" icon="pi pi-pencil" size="small" (click)="toggleEditPhone()" />
         </div>
       </div>
       <p-divider align="left"><b>Location</b></p-divider>
@@ -58,19 +58,19 @@
           <label for="country" class="mb-0">Country:</label>
           <p-dropdown *ngIf="editState.country; else countryText" inputId="country" [options]="countries" optionLabel="name" formControlName="country" [filter]="true" placeholder="Select your country" (onChange)="loadStates()"></p-dropdown>
           <ng-template #countryText>{{ country.value?.name }}</ng-template>
-          <button *ngIf="!editState.country" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('country')"></button>
+          <p-button *ngIf="!editState.country" icon="pi pi-pencil" size="small" (click)="toggleEdit('country')" />
         </div>
         <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
           <label for="state" class="mb-0">State:</label>
           <p-dropdown *ngIf="editState.state; else stateText" inputId="state" [options]="states" optionLabel="name" formControlName="state" [filter]="true" placeholder="Select your state" (onChange)="loadCities()"></p-dropdown>
           <ng-template #stateText>{{ state.value?.name }}</ng-template>
-          <button *ngIf="!editState.state" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('state')"></button>
+          <p-button *ngIf="!editState.state" icon="pi pi-pencil" size="small" (click)="toggleEdit('state')" />
         </div>
         <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
           <label for="city" class="mb-0">City:</label>
           <p-dropdown *ngIf="editState.city; else cityText" inputId="city" [options]="cities" optionLabel="name" formControlName="city" [filter]="true" placeholder="Select your city"></p-dropdown>
           <ng-template #cityText>{{ city.value?.name }}</ng-template>
-          <button *ngIf="!editState.city" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('city')"></button>
+          <p-button *ngIf="!editState.city" icon="pi pi-pencil" size="small" (click)="toggleEdit('city')" />
         </div>
       </div>
       <p-divider align="left"><b>Preferences</b></p-divider>
@@ -79,19 +79,19 @@
           <label for="currency" class="mb-0">Currency:</label>
           <p-dropdown *ngIf="editState.currency; else currencyText" inputId="currency" [options]="currencies" optionLabel="code" formControlName="currency" [filter]="true" class="w-10rem" placeholder="Select your currency"></p-dropdown>
           <ng-template #currencyText>{{ currency.value?.code }}</ng-template>
-          <button *ngIf="!editState.currency" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('currency')"></button>
+          <p-button *ngIf="!editState.currency" icon="pi pi-pencil" size="small" (click)="toggleEdit('currency')" />
         </div>
         <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
           <label for="locale" class="mb-0">Language:</label>
           <p-dropdown *ngIf="editState.locale; else localeText" inputId="locale" [options]="locales" optionLabel="name" formControlName="locale" [filter]="true" placeholder="Select your preferred language"></p-dropdown>
           <ng-template #localeText>{{ locale.value?.name }}</ng-template>
-          <button *ngIf="!editState.locale" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('locale')"></button>
+          <p-button *ngIf="!editState.locale" icon="pi pi-pencil" size="small" (click)="toggleEdit('locale')" />
         </div>
         <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
           <label for="theme" class="mb-0">Theme:</label>
           <p-dropdown *ngIf="editState.theme; else themeText" inputId="theme" [options]="themes" formControlName="theme" placeholder="Select your preferred theme"></p-dropdown>
           <ng-template #themeText>{{ theme.value }}</ng-template>
-          <button *ngIf="!editState.theme" pButton icon="pi pi-pencil" class="p-button-sm" (click)="toggleEdit('theme')"></button>
+          <p-button *ngIf="!editState.theme" icon="pi pi-pencil" size="small" (click)="toggleEdit('theme')" />
         </div>
         <div class="field col-12 md:col-4 flex justify-between align-items-center gap-2">
           <label for="email-notifications" class="mb-0">Email Notifications:</label>
@@ -104,12 +104,12 @@
       </div>
       <p-divider align="left"><b>Account Management</b></p-divider>
       <div class="flex gap-3 mb-4">
-        <p-button label="Change Password" icon="pi pi-key" (onClick)="navigateToChangePassword()"></p-button>
-        <p-button label="Delete Account" icon="pi pi-trash" severity="danger" (onClick)="confirmDeactivation()"></p-button>
+        <p-button label="Change Password" icon="pi pi-key" (onClick)="navigateToChangePassword()" />
+        <p-button label="Delete Account" icon="pi pi-trash" severity="danger" (onClick)="confirmDeactivation()" />
       </div>
       <div class="flex justify-content-end gap-2">
-        <p-button *ngIf="isEditing" label="Cancel" icon="pi pi-times" severity="secondary" (onClick)="confirmCancel()"></p-button>
-        <p-button type="submit" label="Update Details" icon="pi pi-save" [disabled]="!isEditing || !areEditedFieldsValid() || profileForm.errors?.['invalidPhone']"></p-button>
+        <p-button *ngIf="isEditing" label="Cancel" icon="pi pi-times" severity="secondary" (onClick)="confirmCancel()" />
+        <p-button type="submit" label="Update Details" icon="pi pi-save" [disabled]="!isEditing || !areEditedFieldsValid() || profileForm.errors?.['invalidPhone']" />
       </div>
     </p-card>
   </form>

@@ -7,23 +7,33 @@
         <p-tab value="1">Income</p-tab>
       </p-tablist>
     </p-tabs>
-    <p-button label="Add Category" icon="pi pi-plus" (click)="openDialog(true)"></p-button>
+    <p-button label="Add Category" icon="pi pi-plus" (click)="openDialog(true, false)" />
     <div class="grid w-full px-4" *ngIf="categories.length; else noCategories">
       <div class="col-12 md:col-6 lg:col-4" *ngFor="let parent of categories">
         <p-accordion [multiple]="true">
           <p-accordionTab>
             <ng-template pTemplate="header">
-              <img *ngIf="parent.imageUrl; else defaultIcon" [src]="parent.imageUrl" [alt]="parent.name" class="w-2rem h-2rem object-contain" />
-              <ng-template #defaultIcon><span class="pi pi-folder-open text-lg text-gray-500"></span></ng-template>
-              <span class="font-semibold text-base">{{ parent.name }}</span>
+              <div class="flex justify-content-between w-full">
+                <span class="flex align-items-center gap-2">
+                  <img *ngIf="parent.imageUrl; else defaultIcon" [src]="parent.imageUrl" [alt]="parent.name" class="w-2rem h-2rem object-contain" />
+                  <ng-template #defaultIcon><span class="pi pi-folder-open text-lg text-gray-500"></span></ng-template>
+                  <span class="font-semibold">{{ parent.name }}</span>
+                </span>
+                <p-button icon="pi pi-pencil" size="small" [disabled]="parent.isDefault" (click)="openDialog(true, true, parent)" />
+              </div>
             </ng-template>
-            <div class="flex justify-content-center mb-3"><p-button label="Add Subcategory" icon="pi pi-plus" size="small" (click)="openDialog(false, parent)"></p-button></div>
+            <div class="flex justify-content-center mb-3"><p-button label="Add Subcategory" icon="pi pi-plus" size="small" (click)="openDialog(false, false, parent)" /></div>
             <p-accordion [multiple]="true" *ngIf="parent.subcategories.length; else noSubcategories">
               <p-accordionTab *ngFor="let child of parent.subcategories">
                 <ng-template pTemplate="header">
-                  <img *ngIf="child.imageUrl; else defaultIcon" [src]="child.imageUrl" [alt]="child.name" class="w-2rem h-2rem object-contain" />
-                  <ng-template #defaultIcon><span class="pi pi-folder text-lg text-gray-500"></span></ng-template>
-                  <span class="font-medium">{{ child.name }}</span>
+                  <div class="flex justify-content-between w-full">
+                    <span class="flex align-items-center gap-2">
+                      <img *ngIf="child.imageUrl; else defaultIcon" [src]="child.imageUrl" [alt]="child.name" class="w-2rem h-2rem object-contain" />
+                      <ng-template #defaultIcon><span class="pi pi-folder text-lg text-gray-500"></span></ng-template>
+                      <span class="font-medium">{{ child.name }}</span>
+                    </span>
+                    <p-button icon="pi pi-pencil" size="small" [disabled]="child.isDefault" (click)="openDialog(false, true, child)" />
+                  </div>
                 </ng-template>
               </p-accordionTab>
             </p-accordion>
@@ -35,8 +45,8 @@
     <ng-template #noCategories><div class="flex justify-content-center"><p class="text-3xl text-gray-600 font-bold">No categories available</p></div></ng-template>
   </div>
 </div>
-<p-dialog [(visible)]="isDialogShowing" [modal]="true" [header]="isParentMode ? 'Add Category' : 'Add Subcategory'" [styleClass]="'w-30rem ' + (isParentMode ? 'h-auto' : 'h-30rem')" (onHide)="resetForm()">
-  <form [formGroup]="categoryForm" (ngSubmit)="addCategory()" class="flex flex-column h-full justify-content-between">
+<p-dialog [(visible)]="isDialogShowing" [modal]="true" [header]="(isEditMode ? 'Edit' : 'Add') + (isParentMode ? ' Category' : ' Subcategory')" [styleClass]="'w-30rem h-auto'" (onHide)="resetForm()">
+  <form [formGroup]="categoryForm" (ngSubmit)="saveCategory()" class="flex flex-column justify-content-between h-full">
     <div>
       <div class="field">
         <label for="name">Name <span class="text-red-500">*</span></label>
@@ -70,16 +80,19 @@
       <div class="field mt-3">
         <label for="image">Image</label>
         <div class="flex align-items-center gap-3">
-          <p-button label="Choose Image" icon="pi pi-upload" (click)="this.fileInput.nativeElement.click()"></p-button>
-          <span class="text-sm text-gray-500" *ngIf="image?.value as file">{{ file.name }}</span>
+          <p-button label="Choose Image" icon="pi pi-upload" (click)="this.fileInput.nativeElement.click()" />
+          <span class="text-sm text-gray-500">{{ image.value?.name ?? imagePreviewUrl?.split('/')?.pop() }}</span>
         </div>
-        <input type="file" id="image" #fileInput (change)="onImageSelected($event)" accept="image/*" class="hidden" />
+        <input type="file" id="image" #fileInput (change)="onImageSelected($event)" accept="image/*" hidden />
       </div>
-      <img *ngIf="imagePreviewUrl" [src]="imagePreviewUrl" alt="Preview" class="mt-2 w-4rem h-4rem object-contain" />
+      <div *ngIf="imagePreviewUrl" class="mt-2 flex align-items-center gap-2">
+        <img [src]="imagePreviewUrl" alt="Preview" class="w-4rem h-4rem object-cover border-round" />
+        <p-button label="Remove" icon="pi pi-times" severity="danger" size="small" (click)="removeImage()" />
+      </div>
     </div>
     <div class="flex justify-content-end gap-2">
-      <p-button label="Cancel" icon="pi pi-times" severity="secondary" (onClick)="confirmCancel()"></p-button>
-      <p-button type="submit" label="Save" icon="pi pi-save" [disabled]="categoryForm.invalid"></p-button>
+      <p-button label="Cancel" icon="pi pi-times" severity="secondary" (onClick)="confirmCancel()" />
+      <p-button type="submit" [label]="isEditMode ? 'Edit' : 'Save'" icon="pi pi-save" [disabled]="categoryForm.invalid" />
     </div>
   </form>
 </p-dialog>
