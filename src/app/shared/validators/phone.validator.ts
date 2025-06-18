@@ -1,8 +1,9 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
-import { parsePhoneNumberFromString } from 'libphonenumber-js';
+import { isValidPhoneNumber } from 'libphonenumber-js/core';
+import metadata from 'libphonenumber-js/metadata.full.json';
 
 export const phoneValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const phone = control.get('phone')?.value;
   const code = control.get('countryPhoneData')?.value?.code;
-  return phone && code && !parsePhoneNumberFromString(phone, code)?.isValid() ? { invalidPhone: true } : null;
+  return phone && code && !isValidPhoneNumber(phone, code, metadata) ? { invalidPhone: true } : null;
 }
