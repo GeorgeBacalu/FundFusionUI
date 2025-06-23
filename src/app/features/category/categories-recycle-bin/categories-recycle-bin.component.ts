@@ -9,6 +9,7 @@ import { MessageService } from 'primeng/api';
 import { NavbarComponent } from '../../../layout/navbar/navbar.component';
 import { CategoryService } from '../../../core/services/category.service';
 import { Category } from '../../../shared/interfaces/category/category.interface';
+import { failedToRestoreCategory } from '../../../shared/constants/constants';
 
 @Component({
   selector: 'app-categories-recycle-bin',
@@ -29,7 +30,10 @@ export class CategoriesRecycleBinComponent implements OnInit {
 
   navigateToHome = () => this.router.navigate(['/']);
 
-  restore = (id: string) => { throw new Error('Method not implemented.'); };
+  restore = (id: string) => this.categoryService.restore(id).subscribe({
+    next: ({ message }) => (this.messageService.add({ severity: 'success', summary: 'Success', detail: message }), this.loadCategories(), this.router.navigate(['/'])),
+    error: ({ error }) => this.messageService.add({ severity: 'error', summary: error?.title || 'Error', detail: error?.detail || failedToRestoreCategory })
+  })
 
   private loadCategories = () => this.categoryService.getTreeByType(this.selectedIndex === 1, true).pipe(take(1)).subscribe(deletedCategories => this.deletedCategories = deletedCategories);
 }

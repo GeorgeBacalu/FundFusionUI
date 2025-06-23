@@ -18,4 +18,6 @@ export class CategoryService {
   edit = (payload: FormData, id: string): Observable<{ message: string }> => this.http.put<{ message: string }>(`${this.baseUrl}/${apiCategory}/${id}`, payload);
 
   delete = (id: string): Observable<{ message: string }> => this.http.delete<{ message: string }>(`${this.baseUrl}/${apiCategory}/${id}`);
+
+  restore = (id: string): Observable<{ message: string }> => this.http.put<{ message: string }>(`${this.baseUrl}/${apiCategory}/restore/${id}`, null);
 }
