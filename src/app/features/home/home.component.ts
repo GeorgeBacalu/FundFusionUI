@@ -12,7 +12,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { NavbarComponent } from "../../layout/navbar/navbar.component";
 import { CategoryService } from '../../core/services/category.service';
 import { Category } from '../../shared/interfaces/category/category.interface';
-import { failedToAddCategory } from '../../shared/constants/constants';
+import { failedToAddCategory, failedToDeleteCategory } from '../../shared/constants/constants';
 
 @Component({
   selector: 'app-home',
@@ -73,6 +73,9 @@ export class HomeComponent implements OnInit {
 
   removeImage = () => (this.imagePreviewUrl && URL.revokeObjectURL(this.imagePreviewUrl), this.imagePreviewUrl = null, this.image.setValue(null))
 
+  confirmDelete = (id: string) => this.confirmationService.confirm({ header: 'Confirm Delete', message: 'Are you sure you want to move this category to recycle bin?', icon: 'pi pi-exclamation-triangle', acceptLabel: 'Yes', rejectLabel: 'Cancel',
+    acceptIcon: "pi pi-check", rejectIcon: "pi pi-times", acceptButtonStyleClass: 'p-button-danger', rejectButtonStyleClass: 'p-button-secondary', accept: () => this.deleteCategory(id) });
+
   confirmCancel = () => this.confirmationService.confirm({ header: 'Confirm Cancel', message: 'Are you sure you want to cancel? All changes will be lost.', icon: 'pi pi-info-circle', acceptLabel: 'Yes', rejectLabel: 'Cancel',
     acceptIcon: "pi pi-check", rejectIcon: "pi pi-times", acceptButtonStyleClass: 'p-button-danger', rejectButtonStyleClass: 'p-button-secondary', accept: () => this.isDialogShowing = false });
 
@@ -90,6 +93,11 @@ export class HomeComponent implements OnInit {
       error: ({ error }) => this.messageService.add({ severity: 'error', summary: error?.title || 'Error', detail: error?.detail || failedToAddCategory })
     })
   }
+
+  deleteCategory = (id: string) => this.categoryService.delete(id).subscribe({
+      next: ({ message }) => (this.messageService.add({ severity: 'success', summary: 'Success', detail: message }), this.loadCategories()),
+      error: ({ error }) => this.messageService.add({ severity: 'error', summary: error?.title || 'Error', detail: error?.detail || failedToDeleteCategory })
+    })
 
   private loadCategories = () => this.categoryService.getTreeByType(this.selectedIndex === 1).pipe(take(1)).subscribe(categories => this.categories = categories);
 }
