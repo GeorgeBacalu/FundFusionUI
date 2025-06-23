@@ -98,9 +98,9 @@ export class HomeComponent implements OnInit {
   }
 
   deleteCategory = (id: string) => this.categoryService.delete(id).subscribe({
-      next: ({ message }) => (this.messageService.add({ severity: 'success', summary: 'Success', detail: message }), this.loadCategories()),
-      error: ({ error }) => this.messageService.add({ severity: 'error', summary: error?.title || 'Error', detail: error?.detail || failedToSoftDeleteCategory })
-    })
+    next: ({ message }) => (this.messageService.add({ severity: 'success', summary: 'Success', detail: message }), this.loadCategories()),
+    error: ({ error }) => this.messageService.add({ severity: 'error', summary: error?.title || 'Error', detail: error?.detail || failedToSoftDeleteCategory })
+  })
 
   private loadCategories = () => this.categoryService.getTreeByType(this.selectedIndex === 1).pipe(take(1)).subscribe(categories => this.categories = categories);
 }

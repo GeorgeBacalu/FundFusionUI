@@ -11,7 +11,7 @@ export class CategoryService {
 
   constructor(private http: HttpClient) {}
 
-  getTreeByType = (isIncome: boolean, onlyDeleted: boolean = false): Observable<Category[]> => this.http.get<Category[]>(`${this.baseUrl}/${apiCategory}/tree?isIncome=${isIncome}&onlyDeleted=${onlyDeleted}`);
+  getTreeByType = (isIncome: boolean, deleted: boolean = false): Observable<Category[]> => this.http.get<Category[]>(`${this.baseUrl}/${apiCategory}/tree?isIncome=${isIncome}&deleted=${deleted}`);
 
   add = (payload: FormData): Observable<{ message: string }> => this.http.post<{ message: string }>(`${this.baseUrl}/${apiCategory}`, payload);
 
@@ -20,4 +20,6 @@ export class CategoryService {
   delete = (id: string): Observable<{ message: string }> => this.http.delete<{ message: string }>(`${this.baseUrl}/${apiCategory}/${id}`);
 
   restore = (id: string): Observable<{ message: string }> => this.http.put<{ message: string }>(`${this.baseUrl}/${apiCategory}/restore/${id}`, null);
+
+  hardDelete = (id: string): Observable<{ message: string }> => this.http.delete<{ message: string }>(`${this.baseUrl}/${apiCategory}/hard/${id}`);
 }
