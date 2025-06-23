@@ -7,7 +7,10 @@
         <p-tab value="1">Income</p-tab>
       </p-tablist>
     </p-tabs>
-    <p-button label="Add Category" icon="pi pi-plus" (click)="openDialog(true, false)" />
+    <div class="flex gap-2">
+      <p-button label="Add Category" icon="pi pi-plus" (click)="openDialog(true, false)" />
+      <p-button label="Recycle Bin" icon="pi pi-trash" severity="secondary" (click)="navigateToCategoriesRecycleBin()" />
+    </div>
     <div class="grid w-full px-4" *ngIf="categories.length; else noCategories">
       <div class="col-12 md:col-6 lg:col-4" *ngFor="let parent of categories">
         <p-accordion [multiple]="true">

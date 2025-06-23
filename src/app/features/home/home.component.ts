@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { take } from 'rxjs';
 import { AccordionModule } from 'primeng/accordion';
 import { TabsModule } from 'primeng/tabs';
@@ -12,7 +13,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { NavbarComponent } from "../../layout/navbar/navbar.component";
 import { CategoryService } from '../../core/services/category.service';
 import { Category } from '../../shared/interfaces/category/category.interface';
-import { failedToAddCategory, failedToDeleteCategory } from '../../shared/constants/constants';
+import { failedToAddCategory, failedToSoftDeleteCategory } from '../../shared/constants/constants';
 
 @Component({
   selector: 'app-home',
@@ -35,7 +36,7 @@ export class HomeComponent implements OnInit {
   imagePreviewUrl: string | null = null;
   financialTypes: { label: string; value: boolean }[] = [{ label: 'Expense', value: false }, { label: 'Income', value: true }];
 
-  constructor(private formBuilder: FormBuilder, private categoryService: CategoryService, private messageService: MessageService, private confirmationService: ConfirmationService) {
+  constructor(private formBuilder: FormBuilder, private categoryService: CategoryService, private messageService: MessageService, private confirmationService: ConfirmationService, private router: Router) {
     this.categoryForm = this.formBuilder.group({ name: ['', Validators.required], image: [null], financialType: [null], parentCategory: [null] });
   }
 
@@ -45,6 +46,8 @@ export class HomeComponent implements OnInit {
   get parentCategory() { return this.categoryForm.controls['parentCategory']; }
 
   ngOnInit(): void { this.loadCategories(); }
+
+  navigateToCategoriesRecycleBin = () => this.router.navigate(['/categories/recycle-bin']);
 
   onTabChange = (index: string | number) => (this.selectedIndex = +index, this.loadCategories())
 
@@ -96,7 +99,7 @@ export class HomeComponent implements OnInit {
 
   deleteCategory = (id: string) => this.categoryService.delete(id).subscribe({
       next: ({ message }) => (this.messageService.add({ severity: 'success', summary: 'Success', detail: message }), this.loadCategories()),
-      error: ({ error }) => this.messageService.add({ severity: 'error', summary: error?.title || 'Error', detail: error?.detail || failedToDeleteCategory })
+      error: ({ error }) => this.messageService.add({ severity: 'error', summary: error?.title || 'Error', detail: error?.detail || failedToSoftDeleteCategory })
     })
 
   private loadCategories = () => this.categoryService.getTreeByType(this.selectedIndex === 1).pipe(take(1)).subscribe(categories => this.categories = categories);
