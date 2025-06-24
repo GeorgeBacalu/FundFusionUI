@@ -22,4 +22,6 @@ export class CategoryService {
   restore = (id: string): Observable<{ message: string }> => this.http.put<{ message: string }>(`${this.baseUrl}/${apiCategory}/restore/${id}`, null);
 
   hardDelete = (id: string): Observable<{ message: string }> => this.http.delete<{ message: string }>(`${this.baseUrl}/${apiCategory}/hard/${id}`);
+
+  reset = (): Observable<{ message: string }> => this.http.delete<{ message: string }>(`${this.baseUrl}/${apiCategory}/reset`);
 }
