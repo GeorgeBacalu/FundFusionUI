@@ -102,6 +102,10 @@
           <p-inputSwitch inputId="show-last-login" formControlName="showLastLogin" (onChange)="toggleEdit('showLastLogin')"></p-inputSwitch>
         </div>
       </div>
+      <p-divider align="left"><b>Categories Settings</b></p-divider>
+      <div class="flex gap-3 mb-4">
+        <p-button label="Reset Categories" icon="pi pi-trash" severity="danger" (onClick)="confirmResetCategories()" />
+      </div>
       <p-divider align="left"><b>Account Management</b></p-divider>
       <div class="flex gap-3 mb-4">
         <p-button label="Change Password" icon="pi pi-key" (onClick)="navigateToChangePassword()" />

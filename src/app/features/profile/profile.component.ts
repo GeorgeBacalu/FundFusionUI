@@ -14,13 +14,14 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { DropdownModule } from 'primeng/dropdown';
 import { NavbarComponent } from '../../layout/navbar/navbar.component';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
-import { UserService } from '../../core/services/user.service';
 import { AuthService } from '../../core/services/auth.service';
+import { UserService } from '../../core/services/user.service';
 import { LocationService } from '../../core/services/location.service';
+import { CategoryService } from '../../core/services/category.service';
 import { phoneValidator } from '../../shared/validators/phone.validator';
 import { GetProfileDataResponse, Theme } from '../../shared/interfaces/user/profile.interface';
 import { Country, State, City, Currency, Locale, CountryPhoneDataResponse } from '../../shared/interfaces/location/location.interface';
-import { accountDeactivationFailed, countryNotFound, stateNotFound, profileLoadFailed, profileUpdateFailed, avatarUploadFailed, avatarRemoveFailed, payloadTooLarge, fileTooLarge, genericError } from '../../shared/constants/constants';
+import { accountDeactivationFailed, countryNotFound, stateNotFound, profileLoadFailed, profileUpdateFailed, avatarUploadFailed, avatarRemoveFailed, failedToResetCategories, payloadTooLarge, fileTooLarge, genericError } from '../../shared/constants/constants';
 import { AsYouType, getExampleNumber } from 'libphonenumber-js';
 import examples from 'libphonenumber-js/examples.mobile.json';
 
@@ -50,7 +51,7 @@ export class ProfileComponent implements OnInit {
   themeReverseMap: Record<Theme, number> = { [Theme.System]: 0, [Theme.Light]: 1, [Theme.Dark]: 2 };
   mask: string = '';
 
-  constructor(private formBuilder: FormBuilder, private userService: UserService, private locationService: LocationService, private authService: AuthService, private messageService: MessageService, private confirmationService: ConfirmationService, private router: Router) {
+  constructor(private formBuilder: FormBuilder, private authService: AuthService, private userService: UserService, private locationService: LocationService, private categoryService: CategoryService, private messageService: MessageService, private confirmationService: ConfirmationService, private router: Router) {
     this.profileForm = this.formBuilder.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -167,12 +168,18 @@ export class ProfileComponent implements OnInit {
 
   navigateToChangePassword = () => this.router.navigate(['/change-password']);
 
-  confirmDeactivation = () => this.confirmationService.confirm({ header: 'Confirm Deactivation', message: 'This action will deactivate your account. You can reactivate it later by contacting support.', icon: 'pi pi-exclamation-triangle',
-    acceptLabel: 'Yes', rejectLabel: 'Cancel', acceptIcon: "pi pi-check", rejectIcon: "pi pi-times", acceptButtonStyleClass: 'p-button-danger', rejectButtonStyleClass: 'p-button-secondary', accept: () => this.deactivateAccount() });
+  confirmResetCategories = () => this.confirmationService.confirm({ header: 'Confirm Reset', message: 'Are you sure you want to continue? This will permanently delete all your custom categories and restore only the default ones.', icon: 'pi pi-exclamation-triangle',
+    acceptLabel: 'Yes', rejectLabel: 'Cancel', acceptIcon: "pi pi-check", rejectIcon: "pi pi-times", acceptButtonStyleClass: 'p-button-danger', rejectButtonStyleClass: 'p-button-secondary', accept: () => this.categoryService.reset().subscribe({
+      next: ({ message }) => (this.messageService.add({ severity: 'success', summary: 'Success', detail: message }), this.router.navigate(['/'])),
+      error: ({ error }) => this.messageService.add({ severity: 'error', summary: error?.title || 'Error', detail: error?.detail || failedToResetCategories })
+    })
+  });
 
-  deactivateAccount = () => this.authService.deactivateAccount().subscribe({
-    next: ({ message }) => (this.authService.logout(), this.messageService.add({ severity: 'success', summary: 'Success', detail: message }), this.router.navigate(['/login'])),
-    error: ({ error }) => this.messageService.add({ severity: 'error', summary: error?.title || 'Error', detail: error?.detail || accountDeactivationFailed })
+  confirmDeactivation = () => this.confirmationService.confirm({ header: 'Confirm Deactivation', message: 'This action will deactivate your account. You can reactivate it later by contacting support.', icon: 'pi pi-exclamation-triangle',
+    acceptLabel: 'Yes', rejectLabel: 'Cancel', acceptIcon: "pi pi-check", rejectIcon: "pi pi-times", acceptButtonStyleClass: 'p-button-danger', rejectButtonStyleClass: 'p-button-secondary', accept: () => this.authService.deactivateAccount().subscribe({
+      next: ({ message }) => (this.authService.logout(), this.messageService.add({ severity: 'success', summary: 'Success', detail: message }), this.router.navigate(['/login'])),
+      error: ({ error }) => this.messageService.add({ severity: 'error', summary: error?.title || 'Error', detail: error?.detail || accountDeactivationFailed })
+    })
   });
 
   confirmCancel = () => this.confirmationService.confirm({ header: 'Confirm Cancel', message: 'Are you sure you want to cancel? All changes will be lost.', icon: 'pi pi-info-circle', acceptLabel: 'Yes', rejectLabel: 'Cancel',

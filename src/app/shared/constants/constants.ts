@@ -20,6 +20,7 @@ export const failedToAddCategory = "Failed to add category";
 export const failedToSoftDeleteCategory = "Failed to move category to recycle bin";
 export const failedToRestoreCategory = "Failed to restore category";
 export const failedToHardDeleteCategory = "Failed to delete category";
+export const failedToResetCategories = "Failed to reset categories";
 
 export const payloadTooLarge = "Request body too large";
 export const fileTooLarge = "The selected file exceeds the 20MB upload limit";
