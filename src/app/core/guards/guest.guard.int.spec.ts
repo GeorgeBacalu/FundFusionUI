@@ -12,10 +12,7 @@ describe('GuestGuard Integration', () => {
   let router: Router;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [LoginComponent, HomeComponent, RouterModule.forRoot(routes)],
-      providers: [MessageService, provideHttpClient(), provideHttpClientTesting()]
-    }).compileComponents();
+    TestBed.configureTestingModule({ imports: [HomeComponent, LoginComponent, RouterModule.forRoot(routes)], providers: [MessageService, provideHttpClient(), provideHttpClientTesting()] }).compileComponents();
     fixture = TestBed.createComponent(LoginComponent);
     router = TestBed.inject(Router);
     router.initialNavigation();

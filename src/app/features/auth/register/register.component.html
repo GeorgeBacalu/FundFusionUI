@@ -1,59 +1,49 @@
 <div class="flex justify-content-center align-items-center h-screen">
   <form [formGroup]="registerForm" (ngSubmit)="register()">
-    <p-card header="Register" class="w-full sm:w-8 md:w-6 lg:w-4 xl:w-3">
+    <p-card header="Register" class="w-full">
       <div class="field">
         <label for="name">Name <span class="text-red-500">*</span></label>
         <input type="text" id="name" pInputText formControlName="name" class="w-full" placeholder="Enter your name" autocomplete="name" />
-        <small class="block text-red-500" *ngIf="name.invalid && (name.dirty || name.touched)">
-          <div *ngIf="name.errors?.['required']">Name is required</div>
-        </small>
+        <small *ngIf="name.errors?.['required'] && (name.dirty || name.touched)" class="block text-red-500">Name is required</small>
       </div>
       <div class="field">
         <label for="email">Email <span class="text-red-500">*</span></label>
         <input type="email" id="email" pInputText formControlName="email" class="w-full" placeholder="Enter your email" autocomplete="email" />
-        <small class="block text-red-500" *ngIf="email.invalid && (email.dirty || email.touched)">
-          <div *ngIf="email.errors?.['required']">Email is required</div>
-          <div *ngIf="email.errors?.['email']">Invalid email address</div>
-        </small>
+        <small *ngIf="email.errors?.['required'] && (email.dirty || email.touched)" class="block text-red-500">Email is required</small>
+        <small *ngIf="email.errors?.['email'] && (email.dirty || email.touched)" class="block text-red-500">Invalid email address</small>
       </div>
       <div class="field">
         <label for="password">Password <span class="text-red-500">*</span></label>
         <p-password inputId="password" formControlName="password" inputStyleClass="w-full" styleClass="w-full" placeholder="Enter your password" [feedback]="false" [toggleMask]="true" />
-        <small class="block text-red-500" *ngIf="password.invalid && (password.dirty || password.touched)">
-          <div *ngIf="password.errors?.['required']">Password is required</div>
-          <div *ngIf="password.errors?.['pattern']">Invalid password</div>
-        </small>
+        <small *ngIf="password.errors?.['required'] && (password.dirty || password.touched)" class="block text-red-500">Password is required</small>
+        <small *ngIf="password.errors?.['pattern'] && (password.dirty || password.touched)" class="block text-red-500">Invalid password</small>
       </div>
       <div class="field">
         <label for="confirmedPassword">Confirmed password <span class="text-red-500">*</span></label>
         <p-password inputId="confirmedPassword" formControlName="confirmedPassword" inputStyleClass="w-full" styleClass="w-full" placeholder="Confirm your password" [feedback]="false" [toggleMask]="true" />
-        <small class="block text-red-500" *ngIf="confirmedPassword.invalid && (confirmedPassword.dirty || confirmedPassword.touched)">
-          <div *ngIf="confirmedPassword.errors?.['required']">Confirmed password is required</div>
-        </small>
-        <small class="block text-red-500" *ngIf="registerForm.errors?.['passwordMismatch'] && confirmedPassword.valid && password.valid">Passwords don't match</small>
+        <small *ngIf="confirmedPassword.errors?.['required'] && (confirmedPassword.dirty || confirmedPassword.touched)" class="block text-red-500">Password confirmation is required</small>
+        <small *ngIf="registerForm.errors?.['passwordMismatch'] && confirmedPassword.valid && password.valid" class="block text-red-500">Passwords don't match</small>
       </div>
       <div class="field">
         <label for="phone">Phone <span class="text-red-500">*</span></label>
         <div class="flex gap-2 w-full">
-          <p-dropdown [options]="countriesPhoneData" optionLabel="label" formControlName="countryPhoneData" [filter]="true" class="w-6" placeholder="Country (Prefix)" (onChange)="onCountryChange()"></p-dropdown>
-          <ng-container *ngIf="mask"><p-inputMask [mask]="mask" [autoClear]="false" formControlName="phone" class="w-7" placeholder="(999) 999-9999"></p-inputMask></ng-container>
+          <p-dropdown [options]="countriesPhoneData" optionLabel="label" formControlName="countryPhoneData" [filter]="true" class="w-6" placeholder="Country (Prefix)" (onChange)="onCountryChange()" />
+          <ng-container *ngIf="mask"><p-inputMask [mask]="mask" [autoClear]="false" formControlName="phone" class="w-7" placeholder="(999) 999-9999" /></ng-container>
         </div>
-        <small class="block text-red-500" *ngIf="phone.invalid && (phone.dirty || phone.touched)">
-          <div *ngIf="phone.errors?.['required']">Phone is required</div>
-        </small>
-        <small class="block text-red-500" *ngIf="registerForm.errors?.['invalidPhone'] && (phone.dirty || phone.touched)">Invalid phone number</small>
+        <small *ngIf="phone.errors?.['required'] && (phone.dirty || phone.touched)" class="block text-red-500">Phone is required</small>
+        <small *ngIf="registerForm.errors?.['invalidPhone'] && (phone.dirty || phone.touched)" class="block text-red-500">Invalid phone number</small>
       </div>
       <div class="field">
         <label for="country">Country <span class="text-red-500">*</span></label>
-        <p-dropdown inputId="country" [options]="countries" optionLabel="name" formControlName="country" [filter]="true" styleClass="w-full" placeholder="Select your country" (onChange)="loadStates()"></p-dropdown>
+        <p-dropdown inputId="country" [options]="countries" optionLabel="name" formControlName="country" [filter]="true" styleClass="w-full" placeholder="Select your country" (onChange)="loadStates()" />
       </div>
       <div class="field">
         <label for="state">State <span class="text-red-500">*</span></label>
-        <p-dropdown inputId="state" [options]="states" optionLabel="name" formControlName="state" [filter]="true" styleClass="w-full" placeholder="Select your state" (onChange)="loadCities()"></p-dropdown>
+        <p-dropdown inputId="state" [options]="states" optionLabel="name" formControlName="state" [filter]="true" styleClass="w-full" placeholder="Select your state" (onChange)="loadCities()" />
       </div>
       <div class="field">
         <label for="city">City <span class="text-red-500">*</span></label>
-        <p-dropdown inputId="city" [options]="cities" optionLabel="name" formControlName="city" [filter]="true" styleClass="w-full" placeholder="Select your city"></p-dropdown>
+        <p-dropdown inputId="city" [options]="cities" optionLabel="name" formControlName="city" [filter]="true" styleClass="w-full" placeholder="Select your city" />
       </div>
       <p-button type="submit" label="Register" styleClass="w-full" [disabled]="registerForm.invalid" />
       <p-divider align="center" type="solid">OR</p-divider>

@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../../../env/env.dev';
 import { apiUser } from '../../shared/constants/constants';
-import { GetProfileDataResponse, UpdateProfileRequest } from '../../shared/interfaces/user/profile.interface';
+import { GetProfileResponse, UpdateProfileRequest } from '../../shared/interfaces/user/profile.interface';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -20,13 +20,13 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  getProfileData = (): Observable<GetProfileDataResponse> => this.http.get<GetProfileDataResponse>(`${this.baseUrl}/${apiUser}/profile`).pipe(tap(({ userSettings }) => this.avatarUrlSubject.next(this.getCacheBustedUrl(userSettings?.avatarUrl ?? null))));
+  getProfile = (): Observable<GetProfileResponse> => this.http.get<GetProfileResponse>(`${this.baseUrl}/${apiUser}/profile`).pipe(tap(({ userSettings }) => this.avatarUrlSubject.next(this.getCacheBustedUrl(userSettings?.avatarUrl ?? null))));
 
-  updateProfile = (payload: UpdateProfileRequest): Observable<{ message: string }> => this.http.patch<{ message: string }>(`${this.baseUrl}/${apiUser}/profile`, payload);
+  updateProfile = (request: UpdateProfileRequest): Observable<{ message: string }> => this.http.patch<{ message: string }>(`${this.baseUrl}/${apiUser}/profile`, request);
   
   getAvatarUrl = (): Observable<string | null> => this.http.get(`${this.baseUrl}/${apiUser}/profile/image`, { responseType: 'text' }).pipe(tap(avatarUrl => this.avatarUrlSubject.next(this.getCacheBustedUrl(avatarUrl))));
 
-  uploadAvatar = (payload: FormData): Observable<{ message: string }> => this.http.post<{ message: string }>(`${this.baseUrl}/${apiUser}/profile/image`, payload);
+  uploadAvatar = (request: FormData): Observable<{ message: string }> => this.http.post<{ message: string }>(`${this.baseUrl}/${apiUser}/profile/image`, request);
 
   deleteAvatar = (): Observable<{ message: string }> => this.http.delete<{ message: string }>(`${this.baseUrl}/${apiUser}/profile/image`);
 }

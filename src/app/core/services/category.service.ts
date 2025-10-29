@@ -11,13 +11,13 @@ export class CategoryService {
 
   constructor(private http: HttpClient) {}
 
-  getTreeByType = (isIncome: boolean, deleted: boolean = false): Observable<Category[]> => this.http.get<Category[]>(`${this.baseUrl}/${apiCategory}/tree?isIncome=${isIncome}&deleted=${deleted}`);
+  getTree = (isIncome: boolean, deleted: boolean = false): Observable<Category[]> => this.http.get<Category[]>(`${this.baseUrl}/${apiCategory}/tree?isIncome=${isIncome}&deleted=${deleted}`);
 
-  add = (payload: FormData): Observable<{ message: string }> => this.http.post<{ message: string }>(`${this.baseUrl}/${apiCategory}`, payload);
+  add = (request: FormData): Observable<{ message: string }> => this.http.post<{ message: string }>(`${this.baseUrl}/${apiCategory}`, request);
 
-  edit = (payload: FormData, id: string): Observable<{ message: string }> => this.http.put<{ message: string }>(`${this.baseUrl}/${apiCategory}/${id}`, payload);
+  edit = (request: FormData, id: string): Observable<{ message: string }> => this.http.put<{ message: string }>(`${this.baseUrl}/${apiCategory}/${id}`, request);
 
-  delete = (id: string): Observable<{ message: string }> => this.http.delete<{ message: string }>(`${this.baseUrl}/${apiCategory}/${id}`);
+  softDelete = (id: string): Observable<{ message: string }> => this.http.delete<{ message: string }>(`${this.baseUrl}/${apiCategory}/soft/${id}`);
 
   restore = (id: string): Observable<{ message: string }> => this.http.put<{ message: string }>(`${this.baseUrl}/${apiCategory}/restore/${id}`, null);
 

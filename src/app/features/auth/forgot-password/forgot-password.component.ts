@@ -7,7 +7,7 @@ import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../core/services/auth.service';
-import { genericError } from '../../../shared/constants/constants';
+import { passwordResetEmailFailed } from '../../../shared/constants/constants';
 
 @Component({
   selector: 'app-forgot-password',
@@ -27,6 +27,6 @@ export class ForgotPasswordComponent {
 
   sendResetLink = () => this.authService.forgotPassword(this.forgotPasswordForm.value).subscribe({
     next: ({ message }) => this.messageService.add({ severity: 'success', summary: 'Success', detail: message }),
-    error: ({ error }) => this.messageService.add({ severity: 'error', summary: error?.title || 'Error', detail: error?.detail || genericError })
+    error: ({ error }) => this.messageService.add({ severity: 'error', summary: error?.title || 'Check your input', detail: error?.detail || passwordResetEmailFailed })
   });
 }

@@ -44,5 +44,5 @@ export class CategoriesRecycleBinComponent implements OnInit {
     })
   });
 
-  private loadCategories = () => this.categoryService.getTreeByType(this.selectedIndex === 1, true).pipe(take(1)).subscribe(deletedCategories => this.deletedCategories = deletedCategories);
+  private loadCategories = () => this.categoryService.getTree(this.selectedIndex === 1, true).pipe(take(1)).subscribe(deletedCategories => this.deletedCategories = deletedCategories);
 }

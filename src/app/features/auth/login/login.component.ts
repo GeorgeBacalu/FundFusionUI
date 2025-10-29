@@ -10,7 +10,7 @@ import { DividerModule } from 'primeng/divider';
 import { OauthButtonComponent } from '../../../shared/components/oauth-button/oauth-button.component';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../core/services/auth.service';
-import { accountNotFound, genericError, invalidCredentials, loginFailed, userLoggedInSuccessfully } from '../../../shared/constants/constants';
+import { userLoggedInSuccessfully, loginFailed, accountNotFound, invalidCredentials, genericError } from '../../../shared/constants/constants';
 
 @Component({
   selector: 'app-login',

@@ -1,6 +1,6 @@
 import { City, Country, CountryPhoneDataResponse, Currency, Locale, State } from "../location/location.interface";
 
-export interface GetProfileDataResponse {
+export interface GetProfileResponse {
   user: UserDto;
   userSettings: UserSettingsDto;
   countriesPhoneData: CountryPhoneDataResponse[];

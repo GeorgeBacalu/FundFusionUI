@@ -16,17 +16,17 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  register = (payload: RegisterRequest): Observable<{ message: string }> => this.http.post<{ message: string }>(`${this.baseUrl}/${apiAuth}/register`, payload);
+  register = (request: RegisterRequest): Observable<{ message: string }> => this.http.post<{ message: string }>(`${this.baseUrl}/${apiAuth}/register`, request);
 
-  login = (payload: LoginRequest): Observable<LoginResponse> => this.http.post<LoginResponse>(`${this.baseUrl}/${apiAuth}/login`, payload)
+  login = (request: LoginRequest): Observable<LoginResponse> => this.http.post<LoginResponse>(`${this.baseUrl}/${apiAuth}/login`, request)
 
-  refresh = (payload: RefreshRequest): Observable<RefreshResponse> => this.http.post<RefreshResponse>(`${this.baseUrl}/${apiAuth}/refresh`, payload)
+  refresh = (request: RefreshRequest): Observable<RefreshResponse> => this.http.post<RefreshResponse>(`${this.baseUrl}/${apiAuth}/refresh`, request)
 
-  changePassword = (payload: ChangePasswordRequest): Observable<{ message: string }> => this.http.post<{ message: string }>(`${this.baseUrl}/${apiAuth}/change-password`, payload)
+  changePassword = (request: ChangePasswordRequest): Observable<{ message: string }> => this.http.post<{ message: string }>(`${this.baseUrl}/${apiAuth}/change-password`, request)
 
-  forgotPassword = (payload: ForgotPasswordRequest): Observable<{ message: string }> => this.http.post<{ message: string }>(`${this.baseUrl}/${apiAuth}/forgot-password`, payload);
+  forgotPassword = (request: ForgotPasswordRequest): Observable<{ message: string }> => this.http.post<{ message: string }>(`${this.baseUrl}/${apiAuth}/forgot-password`, request);
 
-  resetPassword = (payload: ResetPasswordRequest): Observable<{ message: string }> => this.http.post<{ message: string }>(`${this.baseUrl}/${apiAuth}/reset-password`, payload);
+  resetPassword = (request: ResetPasswordRequest): Observable<{ message: string }> => this.http.post<{ message: string }>(`${this.baseUrl}/${apiAuth}/reset-password`, request);
 
   deactivateAccount = (): Observable<{ message: string }> => this.http.delete<{ message: string }>(`${this.baseUrl}/${apiAuth}`);
 

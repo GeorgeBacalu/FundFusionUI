@@ -8,7 +8,7 @@ import { PasswordModule } from 'primeng/password';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../core/services/auth.service';
 import { changePasswordValidator } from '../../../shared/validators/change-password.validator';
-import { passwordChangedSuccessfully, passwordChangeFailed, passwordRegex } from '../../../shared/constants/constants';
+import { passwordChangeFailed, passwordRegex } from '../../../shared/constants/constants';
 
 @Component({
   selector: 'app-change-password',
@@ -33,7 +33,7 @@ export class ChangePasswordComponent {
   get confirmedPassword() { return this.changePasswordForm.controls['confirmedPassword']; }
 
   changePassword = () => this.authService.changePassword(this.changePasswordForm.value).subscribe({
-    next: () => (this.authService.logout(), this.messageService.add({ severity: 'success', summary: 'Success', detail: passwordChangedSuccessfully }), this.router.navigate(['/login'])),
-    error: ({ error }) => this.messageService.add({ severity: 'error', summary: 'Check your input', detail: error?.detail || passwordChangeFailed })
+    next: ({ message }) => (this.authService.logout(), this.messageService.add({ severity: 'success', summary: 'Success', detail: message }), this.router.navigate(['/login'])),
+    error: ({ error }) => this.messageService.add({ severity: 'error', summary: error?.title || 'Check your input', detail: error?.detail || passwordChangeFailed })
   });
 }

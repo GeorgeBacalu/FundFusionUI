@@ -1,21 +1,17 @@
 <div class="flex justify-content-center align-items-center h-screen">
   <form [formGroup]="loginForm" (ngSubmit)="login()">
-    <p-card header="Login" class="w-full sm:w-8 md:w-6 lg:w-4 xl:w-3">
+    <p-card header="Login" class="w-full">
       <div class="field">
         <label for="email">Email <span class="text-red-500">*</span></label>
         <input type="text" id="email" formControlName="email" pInputText class="w-full" placeholder="Enter your email" autocomplete="email" />
-        <small class="block text-red-500" *ngIf="email.invalid && (email.dirty || email.touched)">
-          <div *ngIf="email.errors?.['required']">Email is required</div>
-          <div *ngIf="email.errors?.['email']">Invalid email address</div>
-        </small>
+        <small *ngIf="email.errors?.['required'] && (email.dirty || email.touched)" class="block text-red-500">Email is required</small>
+        <small *ngIf="email.errors?.['email'] && (email.dirty || email.touched)" class="block text-red-500">Invalid email address</small>
       </div>
       <div class="field">
         <label for="password">Password <span class="text-red-500">*</span></label>
         <p-password inputId="password" formControlName="password" inputStyleClass="w-full" styleClass="w-full" placeholder="Enter your password" [feedback]="false" [toggleMask]="true" />
-        <small class="block text-red-500" *ngIf="password.invalid && (password.dirty || password.touched)">
-          <div *ngIf="password.errors?.['required']">Password is required</div>
-        </small>
-        <div class="mt-1"><a routerLink="/forgot-password" class="text-primary no-underline">Forgot your password?</a></div>
+        <small *ngIf="password.errors?.['required'] && (password.dirty || password.touched)" class="block text-red-500">Password is required</small>
+        <div class="mt-2"><a routerLink="/forgot-password" class="text-primary no-underline">Forgot your password?</a></div>
       </div>
       <p-button type="submit" label="Login" styleClass="w-full" [disabled]="loginForm.invalid" />
       <p-divider align="center" type="solid">OR</p-divider>

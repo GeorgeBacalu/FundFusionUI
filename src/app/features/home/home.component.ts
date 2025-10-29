@@ -13,7 +13,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { NavbarComponent } from "../../layout/navbar/navbar.component";
 import { CategoryService } from '../../core/services/category.service';
 import { Category } from '../../shared/interfaces/category/category.interface';
-import { failedToAddCategory, failedToSoftDeleteCategory } from '../../shared/constants/constants';
+import { failedToSaveCategory, failedToSoftDeleteCategory, isPayloadTooLarge, categoryImageTooLarge } from '../../shared/constants/constants';
 
 @Component({
   selector: 'app-home',
@@ -51,15 +51,21 @@ export class HomeComponent implements OnInit {
 
   onTabChange = (index: string | number) => (this.selectedIndex = +index, this.loadCategories())
 
-  openDialog(isParent: boolean, isEditing: boolean, category?: Category) {
+  async openDialog(isParent: boolean, isEditing: boolean, category?: Category): Promise<void> {
     this.isParentMode = isParent, this.isEditMode = isEditing, this.isDialogShowing = true;
     this.editingCategoryId = isEditing && category?.id || null;
     this.financialType.setValidators(isParent ? Validators.required : null), this.financialType.updateValueAndValidity();
     this.parentCategory.setValidators(!isParent ? Validators.required : null), this.parentCategory.updateValueAndValidity();
-
     if (!category) return;
-    isEditing && (this.name.setValue(category.name), this.imagePreviewUrl = category.imageUrl ?? null);
+    
     isParent ? this.financialType.setValue(category.isIncome) : this.parentCategory.setValue(isEditing ? this.categories.find(parent => parent.id === category.parentId) ?? null : category);
+    if (isEditing) {
+      this.name.setValue(category.name);
+      if (category.imageUrl) {
+        const blob = await (await fetch(category.imageUrl)).blob();
+        this.imagePreviewUrl = category.imageUrl, this.image.setValue(new File([blob], category.imageUrl.split('/').pop() || 'image.png', { type: blob.type }));
+      }
+    }
     this.categoryForm.updateValueAndValidity();
   }
 
@@ -93,14 +99,14 @@ export class HomeComponent implements OnInit {
 
     (this.isEditMode && this.editingCategoryId ? this.categoryService.edit(formData, this.editingCategoryId) : this.categoryService.add(formData)).subscribe({
       next: ({ message }) => (this.messageService.add({ severity: 'success', summary: 'Success', detail: message }), this.isDialogShowing = false, this.loadCategories()),
-      error: ({ error }) => this.messageService.add({ severity: 'error', summary: error?.title || 'Error', detail: error?.detail || failedToAddCategory })
+      error: ({ error }) => this.messageService.add({ severity: 'error', summary: isPayloadTooLarge(error) ? 'File too large' : error?.title || 'Error', detail: isPayloadTooLarge(error) ? categoryImageTooLarge : error?.detail || failedToSaveCategory })
     })
   }
 
-  deleteCategory = (id: string) => this.categoryService.delete(id).subscribe({
+  deleteCategory = (id: string) => this.categoryService.softDelete(id).subscribe({
     next: ({ message }) => (this.messageService.add({ severity: 'success', summary: 'Success', detail: message }), this.loadCategories()),
     error: ({ error }) => this.messageService.add({ severity: 'error', summary: error?.title || 'Error', detail: error?.detail || failedToSoftDeleteCategory })
   })
 
-  private loadCategories = () => this.categoryService.getTreeByType(this.selectedIndex === 1).pipe(take(1)).subscribe(categories => this.categories = categories);
+  private loadCategories = () => this.categoryService.getTree(this.selectedIndex === 1).pipe(take(1)).subscribe(categories => this.categories = categories);
 }
